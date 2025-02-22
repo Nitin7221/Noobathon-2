@@ -23,6 +23,7 @@
     .dashboard-container {
       max-width: 1200px;
       margin: 0 auto;
+      position: relative;
     }
     .header {
       text-align: center;
@@ -105,8 +106,8 @@
     }
     .risk-level {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary-green), var(--danger-red));
-      transition: width 0.5s ease;
+      /* Solid color will be set dynamically based on risk */
+      transition: width 0.5s ease, background-color 0.5s ease;
     }
     .charts-container {
       display: grid;
@@ -134,6 +135,21 @@
       margin-left: 10px;
       animation: pulse 2s infinite;
     }
+    /* Cash Pile Animation */
+    .cash-animation {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2em;
+      opacity: 1;
+      animation: cashAnim 1s forwards;
+      pointer-events: none;
+    }
+    @keyframes cashAnim {
+      0% { transform: translate(-50%, 0); opacity: 1; }
+      100% { transform: translate(-50%, -50px); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -146,9 +162,9 @@
     <!-- Stats Grid Area -->
     <div class="stats-grid">
       <!-- Total Revenue Card with Increase/Decrease Buttons -->
-      <div class="stat-card">
+      <div class="stat-card" id="revenueCard">
         <div class="stat-title">Total Revenue (M)</div>
-        <div class="stat-value" id="revenueDisplay">7.2</div>
+        <div class="stat-value" id="revenueDisplay">7.20</div>
         <div class="stat-trend" id="revenueTrend">↑ 15% from last month</div>
         <div>
           <button class="change-btn" id="decreaseRevenue">-</button>
@@ -158,7 +174,7 @@
       <!-- Meth Production Rate Card with Increase/Decrease Buttons -->
       <div class="stat-card">
         <div class="stat-title">Meth Production Rate (%)</div>
-        <div class="stat-value" id="productionDisplay">99.1</div>
+        <div class="stat-value" id="productionDisplay">99.10</div>
         <div class="stat-trend">Pure per batch</div>
         <div>
           <button class="change-btn" id="decreaseProduction">-</button>
@@ -168,7 +184,7 @@
       <!-- Distribution Efficiency Card with Increase/Decrease Buttons -->
       <div class="stat-card">
         <div class="stat-title">Distribution Efficiency (%)</div>
-        <div class="stat-value" id="efficiencyDisplay">92</div>
+        <div class="stat-value" id="efficiencyDisplay">92.00</div>
         <div class="stat-trend">↑ 5% improvement</div>
         <div>
           <button class="change-btn" id="decreaseEfficiency">-</button>
@@ -180,7 +196,7 @@
         <div class="stat-title">Law Enforcement Risk</div>
         <div class="stat-value" id="riskText">High<span class="warning-indicator"></span></div>
         <div class="risk-meter">
-          <div class="risk-level" id="riskLevel" style="width: 80%;"></div>
+          <div class="risk-level" id="riskLevel" style="width: 80%; background-color: var(--danger-red);"></div>
         </div>
       </div>
     </div>
@@ -204,24 +220,53 @@
     function calculateRisk() {
       let riskScore = (currentRevenue * 10 + currentProduction + currentEfficiency) / 3;
       riskScore = Math.min(100, Math.max(0, riskScore)); // Clamp between 0 and 100
-      document.getElementById('riskLevel').style.width = riskScore + '%';
+      // Update risk bar width (rounded to 2 decimals)
+      document.getElementById('riskLevel').style.width = riskScore.toFixed(2) + '%';
+
+      // Change risk bar color based on thresholds (solid color, no gradient)
+      const primaryGreen = getComputedStyle(document.documentElement).getPropertyValue('--primary-green').trim();
+      const warningYellow = getComputedStyle(document.documentElement).getPropertyValue('--warning-yellow').trim();
+      const dangerRed = getComputedStyle(document.documentElement).getPropertyValue('--danger-red').trim();
       const riskTextEl = document.getElementById('riskText');
-      let riskLabel = riskScore >= 80 ? 'High' : (riskScore >= 60 ? 'Moderate' : 'Low');
+      let riskLabel;
+      if (riskScore >= 80) {
+        riskLabel = 'High';
+        document.getElementById('riskLevel').style.backgroundColor = dangerRed;
+      } else if (riskScore >= 60) {
+        riskLabel = 'Moderate';
+        document.getElementById('riskLevel').style.backgroundColor = warningYellow;
+      } else {
+        riskLabel = 'Low';
+        document.getElementById('riskLevel').style.backgroundColor = primaryGreen;
+      }
       riskTextEl.innerHTML = riskLabel + '<span class="warning-indicator"></span>';
     }
 
     function updateDisplays() {
-      document.getElementById('revenueDisplay').textContent = currentRevenue.toFixed(1);
-      document.getElementById('productionDisplay').textContent = currentProduction.toFixed(1);
-      document.getElementById('efficiencyDisplay').textContent = currentEfficiency.toFixed(1);
+      document.getElementById('revenueDisplay').textContent = currentRevenue.toFixed(2);
+      document.getElementById('productionDisplay').textContent = currentProduction.toFixed(2);
+      document.getElementById('efficiencyDisplay').textContent = currentEfficiency.toFixed(2);
       calculateRisk();
     }
 
-    // Revenue Increase/Decrease Buttons
+    // Cash Animation Function
+    function showCashAnimation() {
+      const revenueCard = document.getElementById('revenueCard');
+      const cashDiv = document.createElement('div');
+      cashDiv.classList.add('cash-animation');
+      cashDiv.textContent = "💵";
+      revenueCard.appendChild(cashDiv);
+      setTimeout(() => {
+        revenueCard.removeChild(cashDiv);
+      }, 1000);
+    }
+
+    // Revenue Increase/Decrease Buttons (increment by 0.1 M)
     document.getElementById('increaseRevenue').addEventListener('click', function() {
       currentRevenue += 0.1;
       updateDisplays();
       updateRevenueChart();
+      showCashAnimation();
     });
     document.getElementById('decreaseRevenue').addEventListener('click', function() {
       currentRevenue = Math.max(0, currentRevenue - 0.1);
@@ -229,23 +274,23 @@
       updateRevenueChart();
     });
 
-    // Production Increase/Decrease Buttons
+    // Production Increase/Decrease Buttons (increment by 1%)
     document.getElementById('increaseProduction').addEventListener('click', function() {
-      currentProduction = Math.min(100, currentProduction + 0.1);
+      currentProduction = Math.min(100, currentProduction + 1);
       updateDisplays();
     });
     document.getElementById('decreaseProduction').addEventListener('click', function() {
-      currentProduction = Math.max(0, currentProduction - 0.1);
+      currentProduction = Math.max(0, currentProduction - 1);
       updateDisplays();
     });
 
-    // Efficiency Increase/Decrease Buttons
+    // Efficiency Increase/Decrease Buttons (increment by 1%)
     document.getElementById('increaseEfficiency').addEventListener('click', function() {
-      currentEfficiency = Math.min(100, currentEfficiency + 0.1);
+      currentEfficiency = Math.min(100, currentEfficiency + 1);
       updateDisplays();
     });
     document.getElementById('decreaseEfficiency').addEventListener('click', function() {
-      currentEfficiency = Math.max(0, currentEfficiency - 0.1);
+      currentEfficiency = Math.max(0, currentEfficiency - 1);
       updateDisplays();
     });
 
@@ -270,15 +315,20 @@
         responsive: true,
         plugins: { legend: { labels: { color: '#85bb65' } } },
         scales: {
-          y: { ticks: { color: '#85bb65', callback: value => '$' + value + 'M' } },
+          y: { 
+            ticks: { 
+              color: '#85bb65', 
+              callback: value => '$' + parseFloat(value).toFixed(2) + 'M'
+            } 
+          },
           x: { ticks: { color: '#85bb65' } }
         }
       }
     });
 
     function updateRevenueChart() {
-      // For simplicity, update the last month's revenue value to currentRevenue.
-      revenueData[revenueData.length - 1] = currentRevenue;
+      // Update the last month's revenue value to currentRevenue (rounded to 2 decimals).
+      revenueData[revenueData.length - 1] = parseFloat(currentRevenue.toFixed(2));
       revenueChart.data.datasets[0].data = revenueData;
       revenueChart.update();
     }
@@ -303,7 +353,10 @@
         plugins: { legend: { labels: { color: '#85bb65' } } },
         scales: {
           y: {
-            ticks: { color: '#85bb65', callback: value => value + '%' },
+            ticks: { 
+              color: '#85bb65', 
+              callback: value => parseFloat(value).toFixed(2) + '%'
+            },
             min: 95,
             max: 100
           },
@@ -315,10 +368,9 @@
             const batch = productionData.labels[index];
             const purity = productionData.datasets[0].data[index];
             let status = purity >= 98 ? 'Optimal' : 'Needs Improvement';
-            alert(`${batch} Details:\nPurity Level: ${purity}%\nStatus: ${status}`);
+            alert(`${batch} Details:\nPurity Level: ${parseFloat(purity).toFixed(2)}%\nStatus: ${status}`);
           }
         },
-        // Enable default tooltips
         interaction: { mode: 'nearest', intersect: true }
       }
     });
