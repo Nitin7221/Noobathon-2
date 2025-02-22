@@ -11,6 +11,7 @@
       --chemical-green: #00FF00;
       --hazard-yellow: #FFE81F;
       --warning-red: #FF2D00;
+      --text-green: #90EE90;
     }
 
     body {
@@ -24,33 +25,25 @@
 
     @font-face {
         font-family: 'BB';
-        src: url('./Heart\ Breaking\ Bad.otf');
+        src: url('./Tansan-9MmGB.otf') format('opentype');
     }
 
     .chemical-float {
-      font-family: 'BB', sans-serif;
+      font-family: BB;
       position: fixed;
       color: var(--chemical-green);
-      font-size: 10px;
+      font-size: 40px;
       opacity: 0.4;
       text-shadow: 0 0 15px var(--chemical-green);
       pointer-events: none;
       z-index: 1;
-      animation: float 18s infinite linear;
+      animation: float 15s infinite linear;
     }
 
     @keyframes float {
-      0% {
-        transform: translateY(110vh) translateX(-10vw);
-        opacity: 0;
-      }
-      50% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: translateY(-10vh) translateX(-10vw);
-        opacity: 0;
-      }
+      0% { transform: translateY(110vh) translateX(-10vw); opacity: 0; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) translateX(10vw); opacity: 0; }
     }
 
     .dashboard {
@@ -79,7 +72,7 @@
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px; /* Increased gap for chemical visibility */
+      gap: 40px;
       margin-bottom: 40px;
     }
 
@@ -115,7 +108,72 @@
       margin-top: 20px;
     }
 
-    /* Rest of the styles remain the same */
+    .risk-bar {
+      height: 40px;
+      background: #111111;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 20px 0;
+      border: 1px solid var(--hazard-yellow);
+    }
+
+    .risk-level {
+      height: 100%;
+      width: 0%;
+      transition: width 0.5s ease;
+      background: linear-gradient(90deg, var(--hazard-yellow), var(--warning-red));
+      box-shadow: 0 0 10px var(--chemical-green);
+    }
+
+    .risk-details {
+      margin-top: 15px;
+      padding: 15px;
+      background: #111111;
+      border-radius: 8px;
+      color: var(--text-green);
+      border: 1px solid var(--chemical-green);
+    }
+
+    .detailed-info {
+      margin: 15px 0;
+      padding: 15px;
+      background: #112211;
+      border-radius: 8px;
+      border: 1px solid var(--chemical-green);
+      color: var(--text-green);
+      display: none;
+    }
+
+    .detailed-info h4 {
+      color: var(--hazard-yellow);
+      margin: 10px 0 5px;
+    }
+
+    .detailed-info ul {
+      padding-left: 20px;
+      margin: 5px 0;
+    }
+
+    .detailed-info li {
+      margin: 5px 0;
+    }
+
+    .warning {
+      color: var(--warning-red);
+      margin-top: 10px;
+      padding: 10px;
+      background: #330000;
+      border-radius: 8px;
+      display: none;
+      border: 1px solid var(--warning-red);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
   </style>
 </head>
 <body>
@@ -149,19 +207,22 @@
         <div class="risk-details" id="riskDetails">
           Click any data point on the charts to assess threat level
         </div>
+        <div class="detailed-info" id="detailedInfo"></div>
         <div class="warning" id="warning"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Floating chemical elements
     const chemicals = [
-      'C10H15N', 'P4', 'I2', 'NH3', 'HCl', 
-      'NaOH', 'C7H7NO2', 'H2SO4', 'KMnO4', 
-      'NH4NO3', 'C6H5CH3', 'C3H8O', 'C6H12O6',
-      'C2H6O', 'BLUE', 'CH3NH2', 'C5H11NO2',
-      'C8H10N4O2', 'C12H22O11', 'C2H5OH'
+      'C<sub>10</sub>H<sub>15</sub>N', 'P<sub>4</sub>', 'I<sub>2</sub>',
+      'NH<sub>3</sub>', 'HCl', 'NaOH', 'C<sub>7</sub>H<sub>7</sub>NO<sub>2</sub>',
+      'H<sub>2</sub>SO<sub>4</sub>', 'KMnO<sub>4</sub>', 'NH<sub>4</sub>NO<sub>3</sub>',
+      'C<sub>6</sub>H<sub>5</sub>CH<sub>3</sub>', 'C<sub>3</sub>H<sub>8</sub>O',
+      'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>', 'C<sub>2</sub>H<sub>6</sub>O',
+      'CH<sub>3</sub>NH<sub>2</sub>', 'C<sub>5</sub>H<sub>11</sub>NO<sub>2</sub>',
+      'C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub>', 'C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>',
+      'C<sub>2</sub>H<sub>5</sub>OH'
     ];
 
     function createFloatingChemical() {
@@ -169,24 +230,18 @@
       element.className = 'chemical-float';
       element.style.left = Math.random() * 100 + 'vw';
       element.style.animationDuration = (Math.random() * 10 + 15) + 's';
-      element.style.fontSize = (Math.random() * 10 + 15) + 'px';
-      element.style.opacity = Math.random() * 0.3 + 0.1;
-      element.textContent = chemicals[Math.floor(Math.random() * chemicals.length)];
+      element.style.fontSize = (Math.random() * 10 + 30) + 'px';
+      element.innerHTML = chemicals[Math.floor(Math.random() * chemicals.length)];
       document.getElementById('chemicalElements').appendChild(element);
+      setTimeout(() => element.remove(), parseFloat(element.style.animationDuration) * 1000);
     }
 
-    // Create floating elements
-    for(let i = 0; i < 5; i++) {
-      createFloatingChemical();
-    }
+    // Initialize floating elements
+    setInterval(createFloatingChemical, 300);
+    for(let i = 0; i < 20; i++) createFloatingChemical();
 
-    setInterval(() => {
-        createFloatingChemical();
-    }, 150);
-
-    
     // Chart and threat assessment code
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       const threatReasons = {
         revenue: {
           low: ["Small cash transactions", "Normal financial patterns"],
@@ -200,26 +255,62 @@
         }
       };
 
-      function updateThreat(value, chartType) {
+      const monthDetails = {
+        Jan: { 
+          revenue: "Initial setup phase with minimal operations", 
+          production: "Equipment calibration and testing" 
+        },
+        Feb: { 
+          revenue: "First successful distribution network established", 
+          production: "Optimized synthesis process implemented" 
+        },
+        Mar: { 
+          revenue: "Market expansion in southwest region", 
+          production: "Quality control improvements completed" 
+        },
+        Apr: { 
+          revenue: "Major client acquisition from Phoenix area", 
+          production: "New precursor supplier onboarded" 
+        },
+        May: { 
+          revenue: "Record sales during holiday weekend", 
+          production: "Batch size increased by 40%" 
+        },
+        Jun: { 
+          revenue: "International distribution negotiations started", 
+          production: "New cooling system installed" 
+        }
+      };
+
+      function updateThreat(value, chartType, month) {
         const riskLevel = document.getElementById('riskLevel');
         const riskDetails = document.getElementById('riskDetails');
         const warning = document.getElementById('warning');
+        const detailedInfo = document.getElementById('detailedInfo');
         
         const maxValue = chartType === 'revenue' ? 2500 : 150;
         const threatPercent = Math.min((value / maxValue) * 100, 100);
         
         riskLevel.style.width = `${threatPercent}%`;
-        
-        const category = threatPercent > 75 ? 'high' : 
-                        threatPercent > 40 ? 'medium' : 'low';
-        
+        const category = threatPercent > 75 ? 'high' : threatPercent > 40 ? 'medium' : 'low';
         const reasons = threatReasons[chartType][category];
         const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
         
-        riskDetails.innerHTML = `
-          <strong>${Math.round(threatPercent)}% Threat (${category.toUpperCase()})</strong><br>
-          ${randomReason}<br>
-          Detected Value: ${value}${chartType === 'revenue' ? 'K' : 'kg'}
+        riskDetails.innerHTML = `<strong>${Math.round(threatPercent)}% Threat (${category.toUpperCase()})</strong><br>
+          ${randomReason}<br>Detected Value: ${value}${chartType === 'revenue' ? 'K' : 'kg'}`;
+
+        // Update detailed info section
+        detailedInfo.style.display = 'block';
+        detailedInfo.innerHTML = `
+          <h4>Operational Details</h4>
+          <p>${monthDetails[month][chartType]}</p>
+          <h4>Historical Context</h4>
+          <ul>
+            <li>Previous Month: ${value*0.8}${chartType === 'revenue' ? 'K' : 'kg'}</li>
+            <li>3-Month Average: ${value*1.1}${chartType === 'revenue' ? 'K' : 'kg'}</li>
+          </ul>
+          <h4>Recommendations</h4>
+          <p>${value > 1000 ? 'Consider expanding distribution channels' : 'Review supplier contracts'}</p>
         `;
 
         warning.style.display = category === 'high' ? 'block' : 'none';
@@ -241,19 +332,19 @@
           }
         },
         scales: {
-          y: {
-            beginAtZero: true,
-            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-            ticks: { color: '#FFE81F', font: { size: 14 } }
+          y: { 
+            beginAtZero: true, 
+            grid: { color: 'rgba(255,255,255,0.1)' }, 
+            ticks: { color: '#FFE81F', font: { size: 14 } } 
           },
-          x: {
-            grid: { display: false },
-            ticks: { color: '#FFE81F', font: { size: 14 } }
+          x: { 
+            grid: { display: false }, 
+            ticks: { color: '#FFE81F', font: { size: 14 } } 
           }
         }
       };
 
-      // Revenue Chart
+      // Initialize charts
       const revenueChart = new Chart(document.getElementById('revenueChart'), {
         type: 'line',
         data: {
@@ -273,14 +364,17 @@
           ...chartConfig,
           onClick: (e, elements) => {
             if (elements.length) {
-              const value = revenueChart.data.datasets[0].data[elements[0].index];
-              updateThreat(value, 'revenue');
+              const index = elements[0].index;
+              updateThreat(
+                revenueChart.data.datasets[0].data[index],
+                'revenue',
+                revenueChart.data.labels[index]
+              );
             }
           }
         }
       });
 
-      // Production Chart
       const productionChart = new Chart(document.getElementById('productionChart'), {
         type: 'bar',
         data: {
@@ -298,14 +392,18 @@
           ...chartConfig,
           onClick: (e, elements) => {
             if (elements.length) {
-              const value = productionChart.data.datasets[0].data[elements[0].index];
-              updateThreat(value, 'production');
+              const index = elements[0].index;
+              updateThreat(
+                productionChart.data.datasets[0].data[index],
+                'production',
+                productionChart.data.labels[index]
+              );
             }
           }
         }
       });
 
-      updateThreat(450, 'revenue');
+      updateThreat(450, 'revenue', 'Jan');
     });
   </script>
 </body>
