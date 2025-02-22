@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="../assets/walter.png">
   <title>Breaking Bed</title>
   <style>
     :root {
@@ -129,6 +130,7 @@
       padding: 0 20px;
       overflow: hidden;
       position: relative;
+      z-index: 4;
       font-size: clamp(16px, 2vw, 20px);
     }
 
@@ -273,7 +275,7 @@
 
     .card:hover {
       scale: 1.05;
-      box-shadow: 0px 7px 10px rgba(136, 203, 2, 0.748) , 0px 0px 5px rgba(209, 209, 209, 0.94);
+      box-shadow: 0px 7px 10px rgba(136, 203, 2, 0.748), 0px 0px 5px rgba(209, 209, 209, 0.94);
       transform: translateY(-5px);
     }
 
@@ -306,6 +308,7 @@
     }
 
     .card-content p {
+      /* background-color: #0a0a0a; */
       font-family: 'Gilroy', sans-serif;
       font-size: 1rem;
       line-height: 1.4;
@@ -313,6 +316,8 @@
 
     /* Footer styling */
     footer {
+      position: relative;
+      z-index: 4;
       background: #111;
       color: #ccc;
       text-align: center;
@@ -334,6 +339,10 @@
     .container {
       position: relative;
       z-index: 2;
+    }
+
+    .container>p {
+      background-color: #0a0a0a;
     }
 
     .floating-phrases {
@@ -375,12 +384,27 @@
       position: relative;
     }
 
-    h2,
-    p {
+    h2 {
       display: inline-block;
       text-align: center;
       background-color: var(--dark-bg);
     }
+
+#video-section {
+  position: relative;
+  padding: 60px 0;
+  background-color: #0a0a0a;
+}
+
+#main-vid {
+  display: block;
+  width: 70vw;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(161, 255, 20, 0.3);
+}
   </style>
 </head>
 
@@ -421,8 +445,14 @@
         </p>
       </div>
     </section>
-
-
+    <section id="video-section">
+    <section id="video-section" style="background-color: #0a0a0a;">
+      <div class="container">
+        <video id="main-vid" autoplay loop muted playsinline>
+          <source src="../assets/bb.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
 
     <section id="characters">
       <div class="container">
