@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,6 +43,7 @@
       position: relative;
       background: var(--dark-bg);
       overflow: hidden;
+      z-index: 3;
     }
 
     .video-bg {
@@ -60,7 +62,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background: linear-gradient(45deg, 
+      background: linear-gradient(45deg,
           rgba(48, 119, 0, 0.134) 0%,
           rgba(98, 144, 0, 0.175) 50%,
           rgba(96, 160, 1, 0.266) 100%);
@@ -69,7 +71,6 @@
 
     .content {
       position: relative;
-      z-index: 2;
       height: 100%;
       display: flex;
       flex-direction: column;
@@ -122,9 +123,9 @@
       border: 2px solid rgba(255, 255, 255, 0.1);
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 
-          0 4px 20px rgba(161, 255, 20, 0.3),
-          0 0 15px rgba(161, 255, 20, 0.2) inset;
+      box-shadow:
+        0 4px 20px rgba(161, 255, 20, 0.3),
+        0 0 15px rgba(161, 255, 20, 0.2) inset;
       padding: 0 20px;
       overflow: hidden;
       position: relative;
@@ -152,14 +153,14 @@
     .button:hover {
       background-color: var(--bb-green);
       transform: translateY(-2px);
-      box-shadow: 
-          0 6px 25px rgba(161, 255, 20, 0.5),
-          0 0 20px rgba(161, 255, 20, 0.3) inset;
+      box-shadow:
+        0 6px 25px rgba(161, 255, 20, 0.5),
+        0 0 20px rgba(161, 255, 20, 0.3) inset;
     }
 
     .button:hover .svgIcon {
       transform: rotate(360deg) scale(1.1);
-      filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+      filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.3));
     }
 
     .button:active {
@@ -167,19 +168,41 @@
     }
 
     @keyframes title-glowing {
-      0% { text-shadow: 0 0 10px rgba(73, 222, 31, 0.7); color: white; }
-      50% { color: rgb(238, 255, 0); }
-      100% { text-shadow: 0 0 25px rgba(73, 222, 31, 0.9), 0 0 35px rgba(73, 222, 31, 0.5); color: #ffffff; }
+      0% {
+        text-shadow: 0 0 10px rgba(73, 222, 31, 0.7);
+        color: white;
+      }
+
+      50% {
+        color: rgb(238, 255, 0);
+      }
+
+      100% {
+        text-shadow: 0 0 25px rgba(73, 222, 31, 0.9), 0 0 35px rgba(73, 222, 31, 0.5);
+        color: #ffffff;
+      }
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 0.9; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 0.9;
+        transform: translateY(0);
+      }
     }
 
     @keyframes button-shine {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(100%); }
+      from {
+        transform: translateX(-100%);
+      }
+
+      to {
+        transform: translateX(100%);
+      }
     }
 
     @media (max-width: 768px) {
@@ -187,9 +210,11 @@
         line-height: 1.1;
         margin-bottom: 15px;
       }
+
       .chemical-text {
         padding: 3px 6px;
       }
+
       .button {
         width: 140px;
         height: 50px;
@@ -206,6 +231,7 @@
 
     /* New section styling */
     section {
+      position: relative;
       background: var(--dark-bg);
       color: var(--light-text);
       padding: 60px 0;
@@ -293,119 +319,226 @@
       font-size: 0.9rem;
     }
 
-    h2{
-        font-size: 100px !important;
-        font-weight: 100 !important;
+    h2 {
+      font-size: 100px !important;
+      font-weight: 100 !important;
     }
 
-    .card-content h3{
-        font-size: 40px !important;
-        font-weight: 100 !important;
+    .card-content h3 {
+      font-size: 40px !important;
+      font-weight: 100 !important;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .floating-phrases {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .floating-phrase {
+      position: absolute;
+      color: rgb(140, 207, 33);
+      font-family: 'BB', sans-serif;
+      font-size: 30px;
+      font-weight: 100;
+      opacity: 0;
+      transition: opacity 0.1s ease-in-out;
+      animation: float 6s ease-out forwards;
+      white-space: nowrap;
+    }
+
+    @keyframes float {
+      0% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      100% {
+        opacity: 0.7;
+        transform: translateY(-120px);
+      }
+    }
+
+    .page-container {
+      position: relative;
+    }
+
+    h2,
+    p {
+      display: inline-block;
+      text-align: center;
+      background-color: var(--dark-bg);
     }
   </style>
 </head>
+
 <body>
-  
-  
-  <div class="hero">
-    <video class="video-bg" autoplay loop muted playsinline>
-      <source src="../assets/hero-video.mp4" type="video/mp4">
-    </video>
-    <div class="overlay"></div>
-    <div class="content">
-      <h1 class="title">
-        <span class="chemical-text">5</span>reaking
-        <span class="chemical-text">B</span>ad
-      </h1>
-      <p class="subtitle">Tight! Tight! Tight!</p>
-      <button class="button">
-        <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
-          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path>
-        </svg>
-        Explore
-      </button>
+
+  <div class="page-container">
+    <div class="hero">
+      <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../assets/hero-video.mp4" type="video/mp4">
+      </video>
+      <div class="overlay"></div>
+      <div class="content">
+        <h1 class="title">
+          <span class="chemical-text">5</span>reaking
+          <span class="chemical-text">B</span>ad
+        </h1>
+        <p class="subtitle" style="background-color: transparent;">Tight! Tight! Tight!</p>
+        <button class="button">
+          <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z">
+            </path>
+          </svg>
+          Explore
+        </button>
+      </div>
     </div>
+
+
+    <div class="floating-phrases"></div>
+    <section id="about">
+      <div class="container">
+        <h2>aBout Breaking Bad</h2>
+        <p>
+          Breaking Bad is a critically acclaimed series chronicling the transformation of Walter White, a high school
+          chemistry teacher turned methamphetamine manufacturer. This homage page embraces the show's dark, gritty
+          aesthetic and unforgettable characters.
+        </p>
+      </div>
+    </section>
+
+
+
+    <section id="characters">
+      <div class="container">
+        <h2>Key Characters</h2>
+        <div class="cards">
+          <div class="card">
+            <img src="./assets/walter.webp" alt="Walter White">
+            <div class="card-content">
+              <h3>Walter White</h3>
+              <p>A brilliant chemist whose life takes a dramatic turn as he plunges into the world of crime to secure
+                his family's future.</p>
+            </div>
+          </div>
+          <div class="card">
+            <img src="./assets/jesse.webp" alt="Jesse Pinkman">
+            <div class="card-content">
+              <h3>jesSe Pinkman</h3>
+              <p>A former student and small-time meth cook whose journey is marked by inner turmoil and personal growth.
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <img src="./assets/saul.webp" alt="Saul Goodman">
+            <div class="card-content">
+              <h3>Saul Goodman</h3>
+              <p>The cunning lawyer known for his colorful personality and unorthodox legal tactics.</p>
+            </div>
+          </div>
+          <div class="card">
+            <img src="./assets/sylar.webp" alt="Skyler White">
+            <div class="card-content">
+              <h3>Skyler White</h3>
+              <p>Walter's determined wife, navigating the moral complexities that arise from her husband’s choices.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section id="gallery">
+      <div class="container">
+        <h2>Gallery</h2>
+        <div class="cards">
+          <div class="card">
+            <img src="./assets/huel.jpg" alt="Scene 1">
+            <div class="caption">Scene 1: A memorable moment.</div>
+          </div>
+          <div class="card">
+            <img src="./assets/fly.webp" alt="Scene 2">
+            <div class="caption">Scene 2: The infamous fly episode.</div>
+          </div>
+          <div class="card">
+            <img src="./assets/hank.avif" alt="Scene 3">
+            <div class="caption">Scene 3: Tense moments unfold.</div>
+          </div>
+          <div class="card">
+            <img src="./assets/end.webp" alt="Scene 4">
+            <div class="caption">Scene 4: The dramatic finale.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <footer>
+      <p>&copy; 2025 Breaking Bad Inspired. All rights reserved.</p>
+    </footer>
   </div>
+  <script>
+    (function () {
+      const phrases = [
+        "Magnets, Bitch!",
+        "Tread Lightly, Bitch!",
+        "Science, Yo!",
+        "Cookin' Blue Sky!",
+        "Better Call Saul!",
+        "Fly in the Lab!",
+        "No Half Measures!",
+        "I Am The Danger!",
+        "Say My Name!",
+        "Tight! Tight! Tight!",
+        "Chili Powder, Yo!",
+        "Los Pollos Hermanos!",
+        "Exploding Tortoise, Boom!",
+        "Walt Jr. Loves Breakfast!",
+        "Pizza on the Roof!"
+      ];
 
-  
-  
-  <section id="about">
-    <div class="container">
-      <h2>About Breaking Bad</h2>
-      <p>
-        Breaking Bad is a critically acclaimed series chronicling the transformation of Walter White, a high school chemistry teacher turned methamphetamine manufacturer. This homage page embraces the show's dark, gritty aesthetic and unforgettable characters.
-      </p>
-    </div>
-  </section>
 
-  
-  
-  <section id="characters">
-    <div class="container">
-      <h2>Key Characters</h2>
-      <div class="cards">
-        <div class="card">
-          <img src="./assets/walter.webp" alt="Walter White">
-          <div class="card-content">
-            <h3>Walter White</h3>
-            <p>A brilliant chemist whose life takes a dramatic turn as he plunges into the world of crime to secure his family's future.</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="./assets/jesse.webp" alt="Jesse Pinkman">
-          <div class="card-content">
-            <h3>jesSe Pinkman</h3>
-            <p>A former student and small-time meth cook whose journey is marked by inner turmoil and personal growth.</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="./assets/saul.webp" alt="Saul Goodman">
-          <div class="card-content">
-            <h3>Saul Goodman</h3>
-            <p>The cunning lawyer known for his colorful personality and unorthodox legal tactics.</p>
-          </div>
-        </div>
-        <div class="card">
-          <img src="./assets/sylar.webp" alt="Skyler White">
-          <div class="card-content">
-            <h3>Skyler White</h3>
-            <p>Walter's determined wife, navigating the moral complexities that arise from her husband’s choices.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      function createFloatingPhrase() {
+        const phraseEl = document.createElement('div');
+        phraseEl.className = 'floating-phrase';
+        phraseEl.textContent = phrases[Math.floor(Math.random() * phrases.length)];
 
-  
-  
-  <section id="gallery">
-    <div class="container">
-      <h2>Gallery</h2>
-      <div class="cards">
-        <div class="card">
-          <img src="./assets/huel.jpg" alt="Scene 1">
-          <div class="caption">Scene 1: A memorable moment.</div>
-        </div>
-        <div class="card">
-          <img src="./assets/fly.webp" alt="Scene 2">
-          <div class="caption">Scene 2: The infamous fly episode.</div>
-        </div>
-        <div class="card">
-          <img src="./assets/hank.avif" alt="Scene 3">
-          <div class="caption">Scene 3: Tense moments unfold.</div>
-        </div>
-        <div class="card">
-          <img src="./assets/end.webp" alt="Scene 4">
-          <div class="caption">Scene 4: The dramatic finale.</div>
-        </div>
-      </div>
-    </div>
-  </section>
+        // Random starting position (limited to central area)
+        const startX = Math.random() * 100; // 30-70% horizontal
+        const startY = Math.random() * 100; // 40-70% vertical
+        phraseEl.style.left = `${startX}%`;
+        phraseEl.style.top = `${startY}%`;
 
-  
-  
-  <footer>
-    <p>&copy; 2025 Breaking Bad Inspired. All rights reserved.</p>
-  </footer>
+        // Random animation variations
+        // const rotate = Math.random() * 10 - 5; // -5 to 5 degrees
+        const translateX = Math.random() * 100 - 50; // -10px to 10px
+        phraseEl.style.transform = `translateX(${translateX}px)`;
+
+        document.querySelector('.floating-phrases').appendChild(phraseEl);
+
+        // Remove element after animation
+        setTimeout(() => phraseEl.remove(), 6000);
+      }
+
+      // Start creating phrases with random intervals
+      setInterval(createFloatingPhrase, 300);
+    })();
+  </script>
 </body>
+
 </html>
