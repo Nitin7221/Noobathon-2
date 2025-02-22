@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Sky Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        :root {
+            --hazmat-yellow: #FFD700;
+            --meth-blue: #1FA9E6;
+            --danger-red: #FF0038;
+            --chemical-green: #00FF87;
+            --dark-bg: #0a0a0a;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            background-color: var(--dark-bg);
+            color: var(--hazmat-yellow);
+            background-image: 
+                linear-gradient(rgba(31, 169, 230, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(31, 169, 230, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header:hover .logo {
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+
+        .logo {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--meth-blue);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--meth-blue);
+            position: relative;
+            transition: 0.3s all ease;
+        }
+
+        .logo::after {
+            content: 'BLUE SKY';
+            position: absolute;
+            left: 2px;
+            text-shadow: 0 0 5px var(--chemical-green);
+            color: transparent;
+            opacity: 0.5;
+        }
+
+        .chemical-formula {
+            font-size: 1.5em;
+            color: var(--chemical-green);
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .chemical-formula::after {
+            content: 'C₁₀H₁₅N • CH₃';
+            position: absolute;
+            left: 0;
+            color: var(--meth-blue);
+            mix-blend-mode: lighten;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--meth-blue);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s all ease;
+            box-shadow: 0 0 15px rgba(31, 169, 230, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px var(--meth-blue);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(31, 169, 230, 0.2), 
+                transparent);
+            animation: chemicalFlow 4s linear infinite;
+        }
+
+        @keyframes chemicalFlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stat-title {
+            font-size: 1.1em;
+            color: var(--hazmat-yellow);
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--meth-blue), var(--chemical-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        .stat-trend {
+            font-size: 0.9em;
+            color: var(--chemical-green);
+        }
+
+        .risk-meter {
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .risk-level {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--chemical-green), 
+                var(--meth-blue), 
+                var(--danger-red));
+            transition: all 0.5s ease;
+        }
+
+        .risk-level::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.1), 
+                transparent);
+            animation: riskScan 2s infinite linear;
+        }
+
+        @keyframes riskScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .warning-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--danger-red);
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .chart-card {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--meth-blue);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-card::before {
+            content: 'CLASSIFIED';
+            position: absolute;
+            font-size: 2em;
+            color: var(--danger-red);
+            opacity: 0.1;
+            transform: rotate(-45deg);
+            top: 30%;
+            left: 20%;
+            z-index: 0;
+        }
+
+        .warning-tape {
+            position: fixed;
+            top: 50%;
+            left: -50px;
+            transform: rotate(-45deg);
+            background: repeating-linear-gradient(
+                45deg,
+                var(--danger-red),
+                var(--danger-red) 20px,
+                black 20px,
+                black 40px
+            );
+            width: 200vw;
+            height: 50px;
+            animation: tapeWarning 10s linear infinite;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+        }
+
+        @keyframes tapeWarning {
+            0% { top: -100px; }
+            100% { top: 150%; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-tape"></div>
+    
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="logo">BLUE SKY</div>
+            <div class="chemical-formula"></div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Revenue</div>
+                <div class="stat-value">$7.2M</div>
+                <div class="stat-trend">↑ 15% from last month</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Meth Production Rate</div>
+                <div class="stat-value">99.1%</div>
+                <div class="stat-trend">Pure per batch</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Distribution Efficiency</div>
+                <div class="stat-value">92%</div>
+                <div class="stat-trend">↑ 5% improvement</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Law Enforcement Risk</div>
+                <div class="stat-value">High<span class="warning-indicator"></span></div>
+                <div class="risk-meter">
+                    <div class="risk-level" style="width: 80%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <canvas id="productionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Charts
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const productionCtx = document.getElementById('productionChart').getContext('2d');
+
+        // Revenue Chart
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: [1.2, 2.5, 3.8, 5.1, 6.4, 7.2],
+                    borderColor: '#1FA9E6',
+                    backgroundColor: 'rgba(31, 169, 230, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFD700'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#FFD700',
+                            callback: function(value) {
+                                return '$' + value + 'M';
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#FFD700'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Production Chart
+        new Chart(productionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Batch 1', 'Batch 2', 'Batch 3', 'Batch 4', 'Batch 5'],
+                datasets: [{
+                    label: 'Purity Level',
+                    data: [96.2, 97.5, 98.3, 99.1, 99.1],
+                    backgroundColor: '#1FA9E6',
+                    borderColor: '#00FF87',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#FFD700'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            color: '#FFD700',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        min: 95,
+                        max: 100
+                    },
+                    x: {
+                        ticks: {
+                            color: '#FFD700'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Dynamic elements
+        function createParticles() {
+            const container = document.querySelector('.dashboard-container');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.background = '#1FA9E6';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = '0.5';
+                particle.style.animation = `particleFloat ${5 + Math.random() * 10}s infinite`;
+                container.appendChild(particle);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleFloat {
+                0% { transform: translateY(0) scale(1); opacity: 0.5; }
+                50% { transform: translateY(-100px) scale(1.5); opacity: 0.8; }
+                100% { transform: translateY(-200px) scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        createParticles();
+
+        // Danger alerts
+        const dangerPhrases = [
+            "DEA SURVEILLANCE DETECTED",
+            "TERRITORY BREACH WARNING",
+            "COOK SITE COMPROMISED",
+            "POLICE RAID IMMINENT"
+        ];
+
+        function showDangerAlert() {
+            const alert = document.createElement('div');
+            alert.textContent = dangerPhrases[Math.floor(Math.random() * dangerPhrases.length)];
+            alert.style.position = 'fixed';
+            alert.style.top = Math.random() * 80 + '%';
+            alert.style.left = Math.random() * 80 + '%';
+            alert.style.color = '#FF0038';
+            alert.style.fontWeight = 'bold';
+            alert.style.textShadow = '0 0 10px #FF0038';
+            alert.style.animation = 'pulse 0.5s infinite';
+            document.body.appendChild(alert);
+            
+            setTimeout(() => alert.remove(), 2000);
+        }
+
+        setInterval(showDangerAlert, 5000 + Math.random() * 10000);
+
+        // Risk level simulation
+        setInterval(() => {
+            const riskLevel = document.querySelector('.risk-level');
+            const newWidth = Math.random() * 30 + 60;
+            riskLevel.style.width = newWidth + '%';
+        }, 5000);
+    </script>
+</body>
+</html>
