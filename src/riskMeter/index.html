@@ -2,23 +2,19 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Empire Dashboard - Revenue & Risk Analytics</title>
-  <!-- Load Chart.js (using defer ensures the script runs after the DOM is parsed) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" defer></script>
+  <title>Empire Dashboard - Dark Green/Yellow Theme</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <style>
     :root {
-      --hazmat-yellow: #ffd700;
-      --toxic-green: #1e8f1e;
-      --warning-red: #ff4444;
-      --background-dark: #0a0a0a;
-      --inner-bg: rgba(26, 26, 26, 0.95);
+      --dark-green: #001a00;
+      --hazmat-yellow: #FFD700;
+      --text-green: #90EE90;
+      --warning-red: #FF4444;
     }
 
     body {
-      background-color: var(--background-dark);
-      background-image: linear-gradient(45deg, rgba(255,215,0,0.05) 25%, transparent 25%, transparent 75%, rgba(255,215,0,0.05) 75%, rgba(255,215,0,0.05));
-      background-size: 20px 20px;
-      color: #fff;
+      background-color: var(--dark-green);
+      color: var(--text-green);
       font-family: 'Courier New', monospace;
       margin: 0;
       padding: 20px;
@@ -33,64 +29,14 @@
       text-align: center;
       margin-bottom: 30px;
       padding: 20px;
-      background: var(--inner-bg);
-      border-radius: 8px;
-      border: 2px solid var(--hazmat-yellow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .header::before {
-      content: "⚗️";
-      position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2em;
-    }
-
-    .header::after {
-      content: "🧪";
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2em;
+      border-bottom: 3px solid var(--hazmat-yellow);
     }
 
     .header h1 {
       color: var(--hazmat-yellow);
       margin: 0;
       font-size: 2.5em;
-      text-transform: uppercase;
       letter-spacing: 3px;
-      text-shadow: 0 0 10px rgba(255,215,0,0.3);
-    }
-
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .stat-box {
-      background: rgba(255,215,0,0.1);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      border: 1px solid rgba(255,215,0,0.2);
-    }
-
-    .stat-value {
-      font-size: 1.4em;
-      color: var(--hazmat-yellow);
-      margin-bottom: 5px;
-    }
-
-    .stat-label {
-      font-size: 0.8em;
-      color: #888;
     }
 
     .grid {
@@ -101,311 +47,216 @@
     }
 
     .chart-container {
-      background: var(--inner-bg);
+      background: rgba(0, 26, 0, 0.9);
       padding: 20px;
       border-radius: 8px;
+      border: 1px solid var(--hazmat-yellow);
+      height: 400px;
       position: relative;
-      border: 1px solid var(--hazmat-yellow);
     }
 
-    .chart-title {
-      color: var(--hazmat-yellow);
-      font-size: 1.2em;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .chart-container h2 {
+      color: white;
+      margin: 0 0 15px 0;
+      font-size: 1.3em;
+      position: absolute;
+      z-index: 1;
     }
 
-    .periodic-element {
-      display: inline-block;
-      padding: 5px 10px;
-      background: rgba(255,215,0,0.1);
-      border: 1px solid var(--hazmat-yellow);
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-
-    .element-number {
-      font-size: 0.8em;
-      color: #888;
+    .chart-wrapper {
+      height: calc(100% - 40px);
+      margin-top: 40px;
+      width: 100%;
     }
 
     .risk-meter {
       grid-column: 1 / -1;
-      background: var(--inner-bg);
+      background: rgba(0, 26, 0, 0.9);
       padding: 20px;
       border-radius: 8px;
-      text-align: center;
       border: 1px solid var(--hazmat-yellow);
-    }
-
-    .risk-title {
-      color: var(--hazmat-yellow);
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
     }
 
     .risk-bar {
       height: 40px;
-      background: #333;
+      background: #000d00;
       border-radius: 20px;
       overflow: hidden;
       margin: 20px 0;
-      border: 2px solid var(--hazmat-yellow);
     }
 
     .risk-level {
       height: 100%;
-      background: linear-gradient(to right, var(--toxic-green), var(--hazmat-yellow), var(--warning-red));
       width: 0%;
       transition: width 0.5s ease;
-    }
-
-    .info-popup {
-      display: none;
-      position: absolute;
-      background: rgba(26,26,26,0.98);
-      border: 2px solid var(--hazmat-yellow);
-      padding: 15px;
-      border-radius: 8px;
-      z-index: 100;
-      min-width: 200px;
-      box-shadow: 0 0 20px rgba(255,215,0,0.2);
-    }
-
-    .status-text {
-      margin-top: 10px;
-      font-weight: bold;
-      font-size: 1.2em;
+      background: linear-gradient(90deg, var(--hazmat-yellow), var(--warning-red));
     }
 
     .risk-details {
       margin-top: 15px;
-      color: #888;
-      padding: 10px;
-      background: rgba(255,215,0,0.1);
+      padding: 15px;
+      background: #000d00;
       border-radius: 8px;
+      color: white;
     }
 
     .warning {
       color: var(--warning-red);
       margin-top: 10px;
-      display: none;
       padding: 10px;
-      background: rgba(255,68,68,0.1);
+      background: #330000;
       border-radius: 8px;
-      border: 1px solid rgba(255,68,68,0.3);
+      display: none;
     }
   </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1>Risk Meter</h1>
-            <div class="chemical-formula">C₁₀H₁₅CH₃</div>
-        </div>
-
-        <div class="stats-container">
-            <div class="stat-box">
-                <div class="stat-value">98.1%</div>
-                <div class="stat-label">Purity</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">42°C</div>
-                <div class="stat-label">Process Temp</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value">14</div>
-                <div class="stat-label">Distribution Points</div>
-            </div>
-        </div>
-
-        <div class="grid">
-            <div class="chart-container">
-                <div class="chart-title">
-                    <span class="periodic-element">
-                        <span class="element-number">86</span><br>
-                        Rv
-                    </span>
-                    Revenue Analysis
-                </div>
-                <canvas id="revenueChart"></canvas>
-                <div id="revenueInfo" class="info-popup"></div>
-            </div>
-
-            <div class="chart-container">
-                <div class="chart-title">
-                    <span class="periodic-element">
-                        <span class="element-number">35</span><br>
-                        Pr
-                    </span>
-                    Production Output
-                </div>
-                <canvas id="productionChart"></canvas>
-                <div id="productionInfo" class="info-popup"></div>
-            </div>
-
-            <div class="risk-meter">
-                <h2 class="risk-title">
-                    <span class="periodic-element">
-                        <span class="element-number">15</span><br>
-                        Th
-                    </span>
-                    Threat Level Monitor
-                </h2>
-                <div class="risk-bar">
-                    <div class="risk-level" id="riskLevel"></div>
-                </div>
-                <div class="status-text">Status: <span id="riskStatus">Low Risk</span></div>
-                <div class="risk-details" id="riskDetails"></div>
-                <div class="warning" id="warning"></div>
-            </div>
-        </div>
   <div class="dashboard">
     <div class="header">
-      <h1>Risk Meter</h1>
-    </div>
-
-    <div class="stats-container">
-      <div class="stat-box">
-        <div class="stat-value">98.1%</div>
-        <div class="stat-label">Purity</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">42°C</div>
-        <div class="stat-label">Process Temp</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">14</div>
-        <div class="stat-label">Distribution Points</div>
-      </div>
+      <h1>BLUE SKY ANALYTICS</h1>
     </div>
 
     <div class="grid">
       <div class="chart-container">
-        <div class="chart-title">
-          <span class="periodic-element">
-            <span class="element-number">86</span><br>Rv
-          </span>
-          Revenue Analysis
+        <h2>Revenue Analysis ($K)</h2>
+        <div class="chart-wrapper">
+          <canvas id="revenueChart"></canvas>
         </div>
-        <canvas id="revenueChart" width="400" height="200"></canvas>
-        <div id="revenueInfo" class="info-popup"></div>
       </div>
 
       <div class="chart-container">
-        <div class="chart-title">
-          <span class="periodic-element">
-            <span class="element-number">35</span><br>Pr
-          </span>
-          Production Output
+        <h2>Production Output (kg)</h2>
+        <div class="chart-wrapper">
+          <canvas id="productionChart"></canvas>
         </div>
-        <canvas id="productionChart" width="400" height="200"></canvas>
-        <div id="productionInfo" class="info-popup"></div>
       </div>
 
       <div class="risk-meter">
-        <h2 class="risk-title">
-          <span class="periodic-element">
-            <span class="element-number">15</span><br>Th
-          </span>
-          Threat Level Monitor
-        </h2>
+        <h2>DEA Threat Assessment</h2>
         <div class="risk-bar">
           <div class="risk-level" id="riskLevel"></div>
         </div>
-        <div class="status-text">Status: <span id="riskStatus">Low Risk</span></div>
-        <div class="risk-details" id="riskDetails"></div>
+        <div class="risk-details" id="riskDetails">
+          Click any data point on the charts to assess threat level
+        </div>
         <div class="warning" id="warning"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Ensure the code runs only after the DOM is fully loaded.
-    window.addEventListener('load', function() {
-      // Function to update Threat Level based on chart value clicked
-      const updateThreatLevel = (value, chartType) => {
-        const riskLevel = document.getElementById('riskLevel');
-        const riskStatus = document.getElementById('riskStatus');
-        const warning = document.getElementById('warning');
-        let threatValue;
-        // For revenue chart, calculate percentage based on $K value (0 to 2500K maps to 0-100%)
-        // For production, assume 0-150kg mapping
-        if(chartType === 'revenue') {
-          threatValue = Math.min(100, (value / 2500) * 100);
-        } else {
-          threatValue = Math.min(100, (value / 150) * 100);
-        }
-        riskLevel.style.width = threatValue + "%";
-        riskStatus.textContent = Math.round(threatValue) + "% Threat";
-        if(threatValue > 75) {
-          riskStatus.style.color = 'var(--warning-red)';
-          warning.style.display = 'block';
-          warning.textContent = `⚠️ HIGH ALERT: ${Math.round(value)} ${chartType === 'revenue' ? '$K' : 'kg'} detected!`;
-        } else {
-          riskStatus.style.color = 'var(--hazmat-yellow)';
-          warning.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+      // Threat data and functions
+      const threatReasons = {
+        revenue: {
+          low: ["Small cash transactions", "Normal financial patterns"],
+          medium: ["Moderate cash flow", "Unusual purchases"],
+          high: ["Large cash movements", "Bank alerts triggered"]
+        },
+        production: {
+          low: ["Small batch operations", "Minimal chemical usage"],
+          medium: ["Increased precursor orders", "Thermal signatures"],
+          high: ["Mass production indicators", "Satellite surveillance"]
         }
       };
 
-      // Function to create a Chart.js chart with an onClick event to update threat level
-      const createChart = (canvasID, chartType) => {
-        const ctx = document.getElementById(canvasID).getContext('2d');
-        const isRevenue = (chartType === 'revenue');
-        const data = {
+      function updateThreat(value, chartType) {
+        const riskLevel = document.getElementById('riskLevel');
+        const riskDetails = document.getElementById('riskDetails');
+        const warning = document.getElementById('warning');
+        
+        const maxValue = chartType === 'revenue' ? 2500 : 150;
+        const threatPercent = Math.min((value / maxValue) * 100, 100);
+        
+        riskLevel.style.width = `${threatPercent}%`;
+        
+        const category = threatPercent > 75 ? 'high' : 
+                        threatPercent > 40 ? 'medium' : 'low';
+        
+        const reasons = threatReasons[chartType][category];
+        const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
+        
+        riskDetails.innerHTML = `
+          <strong>${Math.round(threatPercent)}% Threat (${category.toUpperCase()})</strong><br>
+          ${randomReason}<br>
+          Detected Value: ${value}${chartType === 'revenue' ? 'K' : 'kg'}
+        `;
+
+        warning.style.display = category === 'high' ? 'block' : 'none';
+        warning.textContent = `🚨 HIGH ALERT: ${randomReason}`;
+      }
+
+      // Chart configuration
+      const chartConfig = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: 'rgba(255,255,255,0.1)' },
+            ticks: { color: '#ffffff' }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#ffffff' }
+          }
+        }
+      };
+
+      // Revenue Chart
+      const revenueChart = new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
-            label: isRevenue ? 'Revenue ($K)' : 'Production (kg)',
-            data: isRevenue ? [450, 850, 1200, 1800, 2100, 2400] : [85, 95, 110, 118, 125, 127],
-            borderColor: '#ffd700',
-            backgroundColor: isRevenue ? 'rgba(255,215,0,0.1)' : '#ffd700',
+            label: 'Revenue',
+            data: [450, 850, 1200, 1800, 2100, 2400],
+            borderColor: '#FFD700',
+            backgroundColor: 'rgba(255,215,0,0.1)',
             tension: 0.4,
-            fill: isRevenue
+            borderWidth: 2
           }]
-        };
-        const options = {
-          responsive: true,
-          onClick: (e, elements, chart) => {
-            if (elements.length > 0) {
-              const index = elements[0].index;
-              const value = chart.data.datasets[0].data[index];
-              updateThreatLevel(value, chartType);
-            }
-          },
-          plugins: {
-            legend: {
-              labels: { color: '#ffd700' }
-            }
-          },
-          scales: {
-            y: {
-              ticks: { color: '#ffd700' },
-              grid: { color: 'rgba(255,215,0,0.1)' }
-            },
-            x: {
-              ticks: { color: '#ffd700' },
-              grid: { color: 'rgba(255,215,0,0.1)' }
+        },
+        options: {
+          ...chartConfig,
+          onClick: (e, elements) => {
+            if (elements.length) {
+              const value = revenueChart.data.datasets[0].data[elements[0].index];
+              updateThreat(value, 'revenue');
             }
           }
-        };
-        return new Chart(ctx, {
-          type: isRevenue ? 'line' : 'bar',
-          data: data,
-          options: options
-        });
-      };
+        }
+      });
 
-      // Create the Revenue and Production charts
-      const revenueChart = createChart('revenueChart', 'revenue');
-      const productionChart = createChart('productionChart', 'production');
+      // Production Chart
+      const productionChart = new Chart(document.getElementById('productionChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Production',
+            data: [85, 95, 110, 118, 125, 127],
+            backgroundColor: '#FFD700',
+            borderColor: '#FFEE58',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          ...chartConfig,
+          onClick: (e, elements) => {
+            if (elements.length) {
+              const value = productionChart.data.datasets[0].data[elements[0].index];
+              updateThreat(value, 'production');
+            }
+          }
+        }
+      });
 
-      // Initialize threat level using the first revenue data point.
-      updateThreatLevel(revenueChart.data.datasets[0].data[0], 'revenue');
+      // Initialize with default value
+      updateThreat(450, 'revenue');
     });
   </script>
 </body>
