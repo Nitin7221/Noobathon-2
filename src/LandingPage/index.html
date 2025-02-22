@@ -1,1 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breaking Bed</title>
+  <style>
+    :root {
+      --bb-green: #49DE1F;
+      --toxic-green: #8BCF21;
+      --dark-bg: #0a0a0a;
+      --text-glow: 0 0 1px rgba(72, 222, 31, 0.397);
+      --light-text: #f1f1f1;
+    }
 
+    @font-face {
+      font-family: "BB";
+      src: url(../assets/fonts/Heart\ Breaking\ Bad.otf);
+    }
+
+    @font-face {
+      font-family: "Gilroy";
+      src: url(../assets/fonts/Gilroy-Regular.ttf);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--dark-bg);
+      overflow-x: hidden;
+      font-family: 'Gilroy', sans-serif;
+      color: var(--light-text);
+    }
+
+    /* Hero Section Styles */
+    .hero {
+      height: 100vh;
+      position: relative;
+      background: var(--dark-bg);
+      overflow: hidden;
+    }
+
+    .video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      opacity: 0.6;
+      filter: grayscale(30%);
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, 
+          rgba(48, 119, 0, 0.134) 0%,
+          rgba(98, 144, 0, 0.175) 50%,
+          rgba(96, 160, 1, 0.266) 100%);
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .title {
+      font-family: "BB", sans-serif;
+      font-weight: 100;
+      font-size: clamp(4rem, 15vw, 150px);
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      text-shadow: var(--text-glow);
+      animation: title-glowing 10s ease-in-out infinite alternate;
+    }
+
+    .chemical-text {
+      display: inline-block;
+      padding: 5px 10px;
+      font-family: 'BB', sans-serif;
+      font-weight: 100;
+      color: var(--toxic-green);
+      transition: all 0.3s ease;
+      text-shadow: 0 0 15px rgba(161, 255, 20, 0.315);
+    }
+
+    .subtitle {
+      font-family: 'Gilroy', sans-serif;
+      font-size: clamp(1rem, 3vw, 24px);
+      margin-bottom: 30px;
+      opacity: 0.9;
+      letter-spacing: 2px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .button {
+      width: clamp(120px, 15vw, 160px);
+      height: clamp(50px, 6vh, 60px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background-color: var(--toxic-green);
+      border-radius: 40px;
+      color: var(--dark-bg);
+      font-weight: 700;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+          0 4px 20px rgba(161, 255, 20, 0.3),
+          0 0 15px rgba(161, 255, 20, 0.2) inset;
+      padding: 0 20px;
+      overflow: hidden;
+      position: relative;
+      font-size: clamp(16px, 2vw, 20px);
+    }
+
+    .button::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg,
+          transparent 25%,
+          rgba(255, 255, 255, 0.1) 50%,
+          transparent 75%);
+      animation: button-shine 3s infinite linear;
+      pointer-events: none;
+    }
+
+    .svgIcon {
+      height: 1.4em;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .button:hover {
+      background-color: var(--bb-green);
+      transform: translateY(-2px);
+      box-shadow: 
+          0 6px 25px rgba(161, 255, 20, 0.5),
+          0 0 20px rgba(161, 255, 20, 0.3) inset;
+    }
+
+    .button:hover .svgIcon {
+      transform: rotate(360deg) scale(1.1);
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+    }
+
+    .button:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    @keyframes title-glowing {
+      0% { text-shadow: 0 0 10px rgba(73, 222, 31, 0.7); color: white; }
+      50% { color: rgb(238, 255, 0); }
+      100% { text-shadow: 0 0 25px rgba(73, 222, 31, 0.9), 0 0 35px rgba(73, 222, 31, 0.5); color: #ffffff; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 0.9; transform: translateY(0); }
+    }
+
+    @keyframes button-shine {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    @media (max-width: 768px) {
+      .title {
+        line-height: 1.1;
+        margin-bottom: 15px;
+      }
+      .chemical-text {
+        padding: 3px 6px;
+        transform: rotate(-10deg);
+      }
+      .button {
+        width: 140px;
+        height: 50px;
+        gap: 8px;
+      }
+    }
+
+    /* New container for additional sections */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    /* New section styling */
+    section {
+      background: var(--dark-bg);
+      color: var(--light-text);
+      padding: 60px 0;
+    }
+
+    section h2 {
+      text-align: center;
+      font-family: 'BB', sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: var(--text-glow);
+    }
+
+    section p {
+      font-family: 'Gilroy', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Characters Cards styling */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 2px solid var(--toxic-green);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Updated gallery image styling */
+    .card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Caption styling */
+    .caption {
+      padding: 10px;
+      background: #111;
+      text-align: center;
+      font-size: 1rem;
+      color: var(--light-text);
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card-content h3 {
+      font-family: 'BB', sans-serif;
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+      color: var(--toxic-green);
+    }
+
+    .card-content p {
+      font-family: 'Gilroy', sans-serif;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    /* Footer styling */
+    footer {
+      background: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 20px 10px;
+      font-family: 'Gilroy', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    h2{
+        font-size: 100px !important;
+        font-weight: 100 !important;
+    }
+
+    .card-content h3{
+        font-size: 40px !important;
+        font-weight: 100 !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="hero">
+    <video class="video-bg" autoplay loop muted playsinline>
+      <source src="../assets/hero-video.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+    <div class="content">
+      <h1 class="title">
+        <span class="chemical-text">5</span>reaking
+        <span class="chemical-text">B</span>ad
+      </h1>
+      <p class="subtitle">Tight! Tight! Tight!</p>
+      <button class="button">
+        <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+          <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path>
+        </svg>
+        Explore
+      </button>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <section id="about">
+    <div class="container">
+      <h2>About Breaking Bad</h2>
+      <p>
+        Breaking Bad is a critically acclaimed series chronicling the transformation of Walter White, a high school chemistry teacher turned methamphetamine manufacturer. This homage page embraces the show's dark, gritty aesthetic and unforgettable characters.
+      </p>
+    </div>
+  </section>
+
+  <!-- Characters Section -->
+  <section id="characters">
+    <div class="container">
+      <h2>Key Characters</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="./assets/walter.webp" alt="Walter White">
+          <div class="card-content">
+            <h3>Walter White</h3>
+            <p>A brilliant chemist whose life takes a dramatic turn as he plunges into the world of crime to secure his family's future.</p>
+          </div>
+        </div>
+        <div class="card">
+          <img src="./assets/jesse.webp" alt="Jesse Pinkman">
+          <div class="card-content">
+            <h3>jesSe Pinkman</h3>
+            <p>A former student and small-time meth cook whose journey is marked by inner turmoil and personal growth.</p>
+          </div>
+        </div>
+        <div class="card">
+          <img src="./assets/saul.webp" alt="Saul Goodman">
+          <div class="card-content">
+            <h3>Saul Goodman</h3>
+            <p>The cunning lawyer known for his colorful personality and unorthodox legal tactics.</p>
+          </div>
+        </div>
+        <div class="card">
+          <img src="./assets/sylar.webp" alt="Skyler White">
+          <div class="card-content">
+            <h3>Skyler White</h3>
+            <p>Walter's determined wife, navigating the moral complexities that arise from her husband’s choices.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section id="gallery">
+    <div class="container">
+      <h2>Gallery</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="./assets/huel.jpg" alt="Scene 1">
+          <div class="caption">Scene 1: A memorable moment.</div>
+        </div>
+        <div class="card">
+          <img src="./assets/fly.webp" alt="Scene 2">
+          <div class="caption">Scene 2: The infamous fly episode.</div>
+        </div>
+        <div class="card">
+          <img src="./assets/hank.avif" alt="Scene 3">
+          <div class="caption">Scene 3: Tense moments unfold.</div>
+        </div>
+        <div class="card">
+          <img src="./assets/end.webp" alt="Scene 4">
+          <div class="caption">Scene 4: The dramatic finale.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>&copy; 2025 Breaking Bad Inspired. All rights reserved.</p>
+  </footer>
+</body>
+</html>
