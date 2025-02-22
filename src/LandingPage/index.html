@@ -4,38 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Breaking Bad Inspired</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        :root {
+            --bb-green: #49DE1F;
+            --toxic-green: #8BCF21;
+            --dark-bg: #0a0a0a;
+            --text-glow: 0 0 10px rgba(73, 222, 31, 0.7);
+        }
+
         @font-face {
             font-family: "BB";
             src: url(../assets/fonts/Heart\ Breaking\ Bad.otf);
         }
+
         @font-face {
             font-family: "Gilroy";
             src: url(../assets/fonts/Gilroy-Regular.ttf);
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        body {
+            background: var(--dark-bg);
+            overflow-x: hidden;
+        }
+
         .hero {
             height: 100vh;
-            width: 100%;
             position: relative;
-            background: #0a0a0a;
+            background: var(--dark-bg);
             overflow: hidden;
         }
 
         .video-bg {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            opacity: 0.6;
+            filter: grayscale(30%);
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: absolute;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            opacity: 0.6;
+            background: linear-gradient(45deg, 
+                rgba(10, 10, 10, 0.9) 0%,
+                rgba(10, 10, 10, 0.4) 50%,
+                rgba(10, 10, 10, 0.9) 100%);
+            z-index: 1;
         }
 
         .content {
@@ -46,69 +71,150 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
             text-align: center;
             padding: 0 20px;
+            color: #ffffff;
         }
 
         .title {
             font-family: "BB", sans-serif;
-            font-weight: 200;
-            font-size: 150px;
+            font-weight: 100;
+            font-size: clamp(4rem, 15vw, 150px);
             margin-bottom: 20px;
             letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.518);
+            text-shadow: var(--text-glow);
+            animation: title-glowing 2s ease-in-out infinite alternate;
+        }
+
+        .chemical-text {
+            display: inline-block;
+            padding: 5px 10px;
+            font-family: 'BB', sans-serif;
+            font-weight: 100;
+            color: var(--toxic-green);
+            transition: all 0.3s ease;
+            text-shadow: 0 0 15px rgba(161, 255, 20, 0.8);
         }
 
         .subtitle {
-            font-family: 'Gilroy';
-            font-size: 24px;
+            font-family: 'Gilroy', sans-serif;
+            font-size: clamp(1rem, 3vw, 24px);
             margin-bottom: 30px;
             opacity: 0.9;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out;
         }
 
-        /* Chemical element style text effect */
-        .chemical-text {
-            display: inline-block;
-            padding: 5px;
+        .button {
+            width: clamp(120px, 15vw, 160px);
+            height: clamp(50px, 6vh, 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background-color: var(--toxic-green);
+            border-radius: 40px;
+            color: var(--dark-bg);
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 20px rgba(161, 255, 20, 0.3),
+                0 0 15px rgba(161, 255, 20, 0.2) inset;
+            padding: 0 20px;
+            overflow: hidden;
+            position: relative;
+            font-size: clamp(16px, 2vw, 20px);
         }
 
-        /* Overlay for video */
-        .overlay {
+        .button::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
-            z-index: 1;
+            background: linear-gradient(45deg,
+                transparent 25%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 75%);
+            animation: button-shine 3s infinite linear;
+            pointer-events: none;
+        }
+
+        .svgIcon {
+            height: 1.4em;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .button:hover {
+            background-color: var(--bb-green);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 25px rgba(161, 255, 20, 0.5),
+                0 0 20px rgba(161, 255, 20, 0.3) inset;
+        }
+
+        .button:hover .svgIcon {
+            transform: rotate(360deg) scale(1.1);
+            filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+        }
+
+        .button:active {
+            transform: translateY(1px);
+            scale: 0.98;
+        }
+
+        @keyframes title-glowing {
+            0% { text-shadow: 0 0 10px rgba(73, 222, 31, 0.7); }
+            100% { text-shadow: 0 0 25px rgba(73, 222, 31, 0.9), 0 0 35px rgba(73, 222, 31, 0.5); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 0.9; transform: translateY(0); }
+        }
+
+        @keyframes button-shine {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                line-height: 1.1;
+                margin-bottom: 15px;
+            }
+            .chemical-text {
+                padding: 3px 6px;
+                transform: rotate(-10deg);
+            }
+            .button {
+                width: 140px;
+                height: 50px;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="hero">
-        <!-- Your video will go here -->
         <video class="video-bg" autoplay loop muted playsinline>
             <source src="../assets/hero-video.mp4" type="video/mp4">
         </video>
         <div class="overlay"></div>
         <div class="content">
             <h1 class="title">
-                <span class="chemical-text">5</span>reaking 
+                <span class="chemical-text">5</span>reaking
                 <span class="chemical-text">B</span>ad
             </h1>
             <p class="subtitle">Tight! Tight! Tight!</p>
-            <!-- From Uiverse.io by vinodjangid07 --> 
-<button class="button">
-    <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path></svg>
-   Explore
- </button>
- 
+            <button class="button">
+                <svg class="svgIcon" viewBox="0 0 512 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm50.7-186.9L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"></path>
+                </svg>
+                Explore
+            </button>
         </div>
-    </div>
-    <div>
-
     </div>
 </body>
 </html>
-
