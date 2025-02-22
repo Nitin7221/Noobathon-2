@@ -162,7 +162,7 @@
       0% { top: -50px; opacity: 1; }
       100% { top: 80px; opacity: 0.5; }
     }
-    /* Cash Pile Container - layered rows */
+    /* Cash Pile Container - layered rows for a pile that narrows at the top */
     #cashPile {
       position: relative;
       width: 400px;
@@ -174,10 +174,11 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      gap: 0;
     }
     .cash-icon {
       font-size: 1.4em;
-      margin: 0 -2px;
+      margin: 0; /* No spacing between icons */
     }
   </style>
 </head>
@@ -250,7 +251,7 @@
     // Risk calculation formula: (revenue * 10 + production + efficiency) / 3
     function calculateRisk() {
       let riskScore = (currentRevenue * 10 + currentProduction + currentEfficiency) / 3;
-      riskScore = Math.min(100, Math.max(0, riskScore)); // Clamp between 0 and 100
+      riskScore = Math.min(100, Math.max(0, riskScore));
       document.getElementById('riskLevel').style.width = riskScore.toFixed(2) + '%';
       const primaryGreen = getComputedStyle(document.documentElement).getPropertyValue('--primary-green').trim();
       const warningYellow = getComputedStyle(document.documentElement).getPropertyValue('--warning-yellow').trim();
@@ -278,62 +279,52 @@
       updateCashPile();
     }
 
-    // Update Cash Pile: Arrange icons in layered rows that narrow at the top.
+    // Update Cash Pile: Arrange icons in layered rows with no gaps and slight random rotation.
     function updateCashPile() {
       const cashPileContainer = document.getElementById("cashPile");
-      cashPileContainer.innerHTML = ""; // Clear previous pile
-      
-      // Use 5 fixed rows for the pile
+      cashPileContainer.innerHTML = "";
       const rows = 5;
-      // Calculate total icons based on revenue (multiplier = 5 icons per million)
       const multiplier = 5;
       const totalIcons = Math.floor(currentRevenue * multiplier);
-      // Define percentages for each row (from bottom to top)
-      const percentages = [0.30, 0.25, 0.20, 0.15, 0.10];
+      const percentages = [0.40, 0.30, 0.15, 0.10, 0.05];
       let rowCounts = percentages.map(p => Math.floor(totalIcons * p));
       let sumCounts = rowCounts.reduce((a, b) => a + b, 0);
       let remainder = totalIcons - sumCounts;
-      // Add any leftover icons to the bottom row
       rowCounts[0] += remainder;
       
-      // Set container height (fixed)
-      const containerHeight = 150; 
+      const containerHeight = 150;
       cashPileContainer.style.height = containerHeight + "px";
-      
-      // Each row will be positioned from the bottom upward.
       const rowHeight = containerHeight / rows;
       
       for (let r = 0; r < rows; r++) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("cash-row");
-        // Position rows: bottom row (r = 0) at 0px, next at rowHeight, etc.
         rowDiv.style.bottom = (r * rowHeight) + "px";
-        // Set a fixed row height
         rowDiv.style.height = rowHeight + "px";
         rowDiv.style.width = "100%";
         rowDiv.style.textAlign = "center";
-        // For a pile that is narrow at the top, assign fewer icons in higher rows.
-        const iconsInThisRow = rowCounts[r];
-        for (let i = 0; i < iconsInThisRow; i++) {
+        rowDiv.style.gap = "0";
+        const iconsInRow = rowCounts[r];
+        for (let i = 0; i < iconsInRow; i++) {
           const icon = document.createElement("span");
           icon.classList.add("cash-icon");
           icon.textContent = "💵";
-          icon.style.margin = "0 2px";
+          icon.style.margin = "0";
+          const angle = Math.random() * 20 - 10;
+          icon.style.transform = "rotate(" + angle.toFixed(2) + "deg)";
           rowDiv.appendChild(icon);
         }
         cashPileContainer.appendChild(rowDiv);
       }
     }
 
-    // Falling Cash Animation: Create several falling cash icons inside the cash pile container.
+    // Falling Cash Animation: Create falling cash icons inside the cash pile container.
     function showFallingCashAnimation() {
       const cashPileContainer = document.getElementById("cashPile");
-      // Create, say, 3 falling icons.
       for (let j = 0; j < 3; j++) {
         const fallingIcon = document.createElement("span");
         fallingIcon.classList.add("falling-cash");
         fallingIcon.textContent = "💵";
-        // Random horizontal position within container
         fallingIcon.style.left = Math.random() * 100 + "%";
         cashPileContainer.appendChild(fallingIcon);
         setTimeout(() => {
@@ -342,7 +333,7 @@
       }
     }
 
-    // Cash Animation (flash effect on revenue increase)
+    // Cash Flash Animation (on revenue increase)
     function showCashAnimation() {
       const revenueCard = document.getElementById('revenueCard');
       const cashDiv = document.createElement('div');
