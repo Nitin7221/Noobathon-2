@@ -106,7 +106,6 @@
     }
     .risk-level {
       height: 100%;
-      /* Solid color will be set dynamically based on risk */
       transition: width 0.5s ease, background-color 0.5s ease;
     }
     .charts-container {
@@ -135,7 +134,7 @@
       margin-left: 10px;
       animation: pulse 2s infinite;
     }
-    /* Cash Pile Animation */
+    /* Cash Pile Flash Animation */
     .cash-animation {
       position: absolute;
       bottom: 0;
@@ -149,6 +148,36 @@
     @keyframes cashAnim {
       0% { transform: translate(-50%, 0); opacity: 1; }
       100% { transform: translate(-50%, -50px); opacity: 0; }
+    }
+    /* Falling Cash Animation */
+    .falling-cash {
+      position: absolute;
+      top: -50px;
+      font-size: 1.8em;
+      opacity: 1;
+      animation: fallCash 1s forwards;
+      pointer-events: none;
+    }
+    @keyframes fallCash {
+      0% { top: -50px; opacity: 1; }
+      100% { top: 80px; opacity: 0.5; }
+    }
+    /* Cash Pile Container - layered rows */
+    #cashPile {
+      position: relative;
+      width: 400px;
+      height: 150px;
+      margin: 30px auto 0 auto;
+    }
+    .cash-row {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .cash-icon {
+      font-size: 1.4em;
+      margin: 0 -2px;
     }
   </style>
 </head>
@@ -209,6 +238,8 @@
         <canvas id="productionChart"></canvas>
       </div>
     </div>
+    <!-- Cash Pile Container -->
+    <div id="cashPile"></div>
   </div>
   <script>
     // Global interactive values
@@ -220,10 +251,7 @@
     function calculateRisk() {
       let riskScore = (currentRevenue * 10 + currentProduction + currentEfficiency) / 3;
       riskScore = Math.min(100, Math.max(0, riskScore)); // Clamp between 0 and 100
-      // Update risk bar width (rounded to 2 decimals)
       document.getElementById('riskLevel').style.width = riskScore.toFixed(2) + '%';
-
-      // Change risk bar color based on thresholds (solid color, no gradient)
       const primaryGreen = getComputedStyle(document.documentElement).getPropertyValue('--primary-green').trim();
       const warningYellow = getComputedStyle(document.documentElement).getPropertyValue('--warning-yellow').trim();
       const dangerRed = getComputedStyle(document.documentElement).getPropertyValue('--danger-red').trim();
@@ -247,9 +275,74 @@
       document.getElementById('productionDisplay').textContent = currentProduction.toFixed(2);
       document.getElementById('efficiencyDisplay').textContent = currentEfficiency.toFixed(2);
       calculateRisk();
+      updateCashPile();
     }
 
-    // Cash Animation Function
+    // Update Cash Pile: Arrange icons in layered rows that narrow at the top.
+    function updateCashPile() {
+      const cashPileContainer = document.getElementById("cashPile");
+      cashPileContainer.innerHTML = ""; // Clear previous pile
+      
+      // Use 5 fixed rows for the pile
+      const rows = 5;
+      // Calculate total icons based on revenue (multiplier = 5 icons per million)
+      const multiplier = 5;
+      const totalIcons = Math.floor(currentRevenue * multiplier);
+      // Define percentages for each row (from bottom to top)
+      const percentages = [0.30, 0.25, 0.20, 0.15, 0.10];
+      let rowCounts = percentages.map(p => Math.floor(totalIcons * p));
+      let sumCounts = rowCounts.reduce((a, b) => a + b, 0);
+      let remainder = totalIcons - sumCounts;
+      // Add any leftover icons to the bottom row
+      rowCounts[0] += remainder;
+      
+      // Set container height (fixed)
+      const containerHeight = 150; 
+      cashPileContainer.style.height = containerHeight + "px";
+      
+      // Each row will be positioned from the bottom upward.
+      const rowHeight = containerHeight / rows;
+      
+      for (let r = 0; r < rows; r++) {
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("cash-row");
+        // Position rows: bottom row (r = 0) at 0px, next at rowHeight, etc.
+        rowDiv.style.bottom = (r * rowHeight) + "px";
+        // Set a fixed row height
+        rowDiv.style.height = rowHeight + "px";
+        rowDiv.style.width = "100%";
+        rowDiv.style.textAlign = "center";
+        // For a pile that is narrow at the top, assign fewer icons in higher rows.
+        const iconsInThisRow = rowCounts[r];
+        for (let i = 0; i < iconsInThisRow; i++) {
+          const icon = document.createElement("span");
+          icon.classList.add("cash-icon");
+          icon.textContent = "💵";
+          icon.style.margin = "0 2px";
+          rowDiv.appendChild(icon);
+        }
+        cashPileContainer.appendChild(rowDiv);
+      }
+    }
+
+    // Falling Cash Animation: Create several falling cash icons inside the cash pile container.
+    function showFallingCashAnimation() {
+      const cashPileContainer = document.getElementById("cashPile");
+      // Create, say, 3 falling icons.
+      for (let j = 0; j < 3; j++) {
+        const fallingIcon = document.createElement("span");
+        fallingIcon.classList.add("falling-cash");
+        fallingIcon.textContent = "💵";
+        // Random horizontal position within container
+        fallingIcon.style.left = Math.random() * 100 + "%";
+        cashPileContainer.appendChild(fallingIcon);
+        setTimeout(() => {
+          cashPileContainer.removeChild(fallingIcon);
+        }, 1000);
+      }
+    }
+
+    // Cash Animation (flash effect on revenue increase)
     function showCashAnimation() {
       const revenueCard = document.getElementById('revenueCard');
       const cashDiv = document.createElement('div');
@@ -267,6 +360,7 @@
       updateDisplays();
       updateRevenueChart();
       showCashAnimation();
+      showFallingCashAnimation();
     });
     document.getElementById('decreaseRevenue').addEventListener('click', function() {
       currentRevenue = Math.max(0, currentRevenue - 0.1);
@@ -296,7 +390,6 @@
 
     // Initialize Revenue Chart
     const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    // Example dataset: monthly revenue in millions
     let revenueData = [7.2, 7.0, 6.8, 7.5, 7.1, 7.2];
     const revenueChart = new Chart(revenueCtx, {
       type: 'line',
@@ -327,7 +420,6 @@
     });
 
     function updateRevenueChart() {
-      // Update the last month's revenue value to currentRevenue (rounded to 2 decimals).
       revenueData[revenueData.length - 1] = parseFloat(currentRevenue.toFixed(2));
       revenueChart.data.datasets[0].data = revenueData;
       revenueChart.update();
@@ -375,7 +467,6 @@
       }
     });
 
-    // Initial update on page load
     updateDisplays();
   </script>
 </body>
