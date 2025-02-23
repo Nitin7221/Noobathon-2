@@ -5,8 +5,6 @@
   <title>Blue Sky Analytics</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="icon" href="../assets/walter.png">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
   <style>
     :root {
       --black-background: #000000;
@@ -171,19 +169,81 @@
       animation: pulse 1.5s infinite;
     }
 
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .metric-box {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid var(--chemical-green);
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 1.8em;
+      color: var(--hazard-yellow);
+      margin: 5px 0;
+    }
+
+    .metric-label {
+      color: var(--text-green);
+      font-size: 0.9em;
+    }
+
+    .controls-container {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--warning-red);
+      margin-top: 20px;
+    }
+
+    .control-group {
+      margin: 15px 0;
+    }
+
+    .slider-label {
+      color: var(--text-green);
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .slider {
+      width: 100%;
+      height: 10px;
+      background: #111111;
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--hazard-yellow);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .control-value {
+      color: var(--text-green);
+      float: right;
+    }
+
     @keyframes pulse {
       0% { opacity: 0.8; }
       50% { opacity: 1; }
       100% { opacity: 0.8; }
     }
-
-    .dashboard{
-      margin-top: 100px;
-    }
   </style>
 </head>
 <body>
-  <div id="navbar-container"></div>
   <div id="chemicalElements"></div>
 
   <div class="dashboard">
@@ -206,6 +266,40 @@
         </div>
       </div>
 
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-value" id="inventoryLevel">78%</div>
+          <div class="metric-label">Inventory Levels</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="productionEfficiency">88%</div>
+          <div class="metric-label">Production Efficiency</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="deaAlerts">2/10</div>
+          <div class="metric-label">DEA Alert Frequency</div>
+        </div>
+      </div>
+
+      <div class="controls-container">
+        <h2>⚙️ Operational Controls</h2>
+        <div class="control-group">
+          <label class="slider-label">
+            Security Level: 
+            <span class="control-value" id="securityValue">0.5x</span>
+          </label>
+          <input type="range" min="0" max="100" value="50" class="slider" id="securityLevel">
+        </div>
+
+        <div class="control-group">
+          <label class="slider-label">
+            Production Speed: 
+            <span class="control-value" id="productionSpeedValue">1x</span>
+          </label>
+          <input type="range" min="50" max="150" value="100" class="slider" id="productionSpeed">
+        </div>
+      </div>
+
       <div class="risk-meter">
         <h2>⚠️ DEA Threat Assessment</h2>
         <div class="risk-bar">
@@ -220,7 +314,6 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
   <script>
     const chemicals = [
       'C<sub>10</sub>H<sub>15</sub>N', 'P<sub>4</sub>', 'I<sub>2</sub>',
@@ -233,6 +326,11 @@
       'C<sub>2</sub>H<sub>5</sub>OH'
     ];
 
+    let securityLevel = 50;
+    let productionSpeed = 100;
+    let baseProductionData = [85, 95, 110, 118, 125, 127];
+    let lastClicked = { type: 'revenue', index: 0 };
+
     function createFloatingChemical() {
       const element = document.createElement('div');
       element.className = 'chemical-float';
@@ -244,11 +342,9 @@
       setTimeout(() => element.remove(), parseFloat(element.style.animationDuration) * 1000);
     }
 
-    // Initialize floating elements
     setInterval(createFloatingChemical, 300);
     for(let i = 0; i < 20; i++) createFloatingChemical();
 
-    // Chart and threat assessment code
     document.addEventListener('DOMContentLoaded', () => {
       const threatReasons = {
         revenue: {
@@ -296,8 +392,15 @@
         const warning = document.getElementById('warning');
         const detailedInfo = document.getElementById('detailedInfo');
         
-        const maxValue = chartType === 'revenue' ? 2500 : 150;
-        const threatPercent = Math.min((value / maxValue) * 100, 100);
+        const maxValues = {
+          revenue: 2500,
+          production: 150
+        };
+        
+        let threatPercent = (value / maxValues[chartType]) * 100;
+        
+        threatPercent *= (1 - securityLevel/200);
+        threatPercent = Math.min(threatPercent, 100);
         
         riskLevel.style.width = `${threatPercent}%`;
         const category = threatPercent > 75 ? 'high' : threatPercent > 40 ? 'medium' : 'low';
@@ -307,15 +410,14 @@
         riskDetails.innerHTML = `<strong>${Math.round(threatPercent)}% Threat (${category.toUpperCase()})</strong><br>
           ${randomReason}<br>Detected Value: ${value}${chartType === 'revenue' ? 'K' : 'kg'}`;
 
-        // Update detailed info section
         detailedInfo.style.display = 'block';
         detailedInfo.innerHTML = `
           <h4>Operational Details</h4>
           <p>${monthDetails[month][chartType]}</p>
           <h4>Historical Context</h4>
           <ul>
-            <li>Previous Month: ${value*0.8}${chartType === 'revenue' ? 'K' : 'kg'}</li>
-            <li>3-Month Average: ${value*1.1}${chartType === 'revenue' ? 'K' : 'kg'}</li>
+            <li>Previous Month: ${(value*0.8).toFixed(2)}${chartType === 'revenue' ? 'K' : 'kg'}</li>
+            <li>3-Month Average: ${(value*1.1).toFixed(2)}${chartType === 'revenue' ? 'K' : 'kg'}</li>
           </ul>
           <h4>Recommendations</h4>
           <p>${value > 1000 ? 'Consider expanding distribution channels' : 'Review supplier contracts'}</p>
@@ -323,6 +425,50 @@
 
         warning.style.display = category === 'high' ? 'block' : 'none';
         warning.textContent = `🚨 HIGH ALERT: ${randomReason}`;
+      }
+
+      document.getElementById('securityLevel').addEventListener('input', function(e) {
+        securityLevel = e.target.value;
+        document.getElementById('securityValue').textContent = `${securityLevel/100}x`;
+        updateMetrics();
+        refreshThreat();
+      });
+
+      document.getElementById('productionSpeed').addEventListener('input', function(e) {
+        productionSpeed = e.target.value;
+        document.getElementById('productionSpeedValue').textContent = `${productionSpeed}%`;
+        updateProductionData();
+        updateMetrics();
+        refreshThreat();
+      });
+
+      function updateProductionData() {
+        const adjustedData = baseProductionData.map(v => 
+          Math.round(v * (productionSpeed/100))
+        );
+        productionChart.data.datasets[0].data = adjustedData;
+        productionChart.update();
+      }
+
+      function updateMetrics() {
+        const inventory = Math.max(0, 100 - (productionSpeed - 100));
+        document.getElementById('inventoryLevel').textContent = `${inventory}%`;
+
+        const efficiency = 80 + (securityLevel * 0.2);
+        document.getElementById('productionEfficiency').textContent = `${efficiency.toFixed(1)}%`;
+
+        const alerts = Math.round((100 - securityLevel)/20);
+        document.getElementById('deaAlerts').textContent = `${alerts}/10`;
+      }
+
+      function refreshThreat() {
+        if(lastClicked.type === 'production') {
+          const value = productionChart.data.datasets[0].data[lastClicked.index];
+          updateThreat(value, 'production', productionChart.data.labels[lastClicked.index]);
+        } else {
+          const value = revenueChart.data.datasets[0].data[lastClicked.index];
+          updateThreat(value, 'revenue', revenueChart.data.labels[lastClicked.index]);
+        }
       }
 
       const chartConfig = {
@@ -352,7 +498,6 @@
         }
       };
 
-      // Initialize charts
       const revenueChart = new Chart(document.getElementById('revenueChart'), {
         type: 'line',
         data: {
@@ -372,11 +517,11 @@
           ...chartConfig,
           onClick: (e, elements) => {
             if (elements.length) {
-              const index = elements[0].index;
+              lastClicked = { type: 'revenue', index: elements[0].index };
               updateThreat(
-                revenueChart.data.datasets[0].data[index],
+                revenueChart.data.datasets[0].data[elements[0].index],
                 'revenue',
-                revenueChart.data.labels[index]
+                revenueChart.data.labels[elements[0].index]
               );
             }
           }
@@ -389,7 +534,7 @@
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
           datasets: [{
             label: 'Production',
-            data: [85, 95, 110, 118, 125, 127],
+            data: baseProductionData,
             backgroundColor: '#FFE81F',
             borderColor: '#FFEE58',
             borderWidth: 1,
@@ -400,28 +545,20 @@
           ...chartConfig,
           onClick: (e, elements) => {
             if (elements.length) {
-              const index = elements[0].index;
+              lastClicked = { type: 'production', index: elements[0].index };
               updateThreat(
-                productionChart.data.datasets[0].data[index],
+                productionChart.data.datasets[0].data[elements[0].index],
                 'production',
-                productionChart.data.labels[index]
+                productionChart.data.labels[elements[0].index]
               );
             }
           }
         }
       });
 
+      updateMetrics();
       updateThreat(450, 'revenue', 'Jan');
     });
-
-    fetch('../../navbar.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('navbar-container').innerHTML = html;
-        
-        // Reinitialize Flowbite JS after injecting navbar
-        initFlowbite(); 
-      });
   </script>
 </body>
 </html>
