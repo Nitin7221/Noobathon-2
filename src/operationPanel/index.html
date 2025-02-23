@@ -169,7 +169,7 @@
 
     /* Remove fixed height for dashboard panels for better mobile scaling */
     .dashboard-panel {
-      height: 730px;
+      height: 800px;
     }
 
     .dashboard-panel::-webkit-scrollbar {
@@ -484,8 +484,8 @@
       container: document.getElementById('heatmapOverlay'),
       radius: 100,
       maxOpacity: 0.8,
-      minOpacity: 0.3,
-      blur: 0.85,
+      minOpacity: 0.5,
+      blur: 1,
       gradient: {
         "0.0": "green",
         "0.5": "yellow",
@@ -496,8 +496,8 @@
     function generateRandomData() {
       var points = [];
       var max = 100;
-      var width = 1200;
-      var height = 800;
+      var width = 1000;
+      var height = 600;
 
       for (let i = 0; i < 50; i++) {
         points.push({
