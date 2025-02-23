@@ -15,174 +15,289 @@
       --danger-red: #dc3545;
       --warning-yellow: #ffc107;
     }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       font-family: 'Courier New', monospace;
       background-color: #0a0a0a;
       color: var(--light-green);
       overflow-x: hidden;
+      min-height: 100vh;
     }
+
     .dashboard-container {
+      width: 100%;
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 60px auto 0;
+      padding: 15px;
       position: relative;
-      margin-top: 100px;
     }
+
     .header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: clamp(20px, 4vw, 30px);
     }
+
     .logo {
-      font-size: 2.5em;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
       font-weight: bold;
       color: var(--primary-green);
       text-transform: uppercase;
       letter-spacing: 3px;
+      word-wrap: break-word;
     }
+
     .logo span {
       color: var(--light-green);
+      display: inline-block;
     }
+
     .chemical-formula {
-      font-size: 1.2em;
+      font-size: clamp(1rem, 2vw, 1.2rem);
       color: var(--warning-yellow);
       margin-top: 10px;
     }
+
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+      gap: clamp(10px, 2vw, 20px);
+      margin-bottom: clamp(20px, 4vw, 30px);
     }
+
     .stat-card {
       background: linear-gradient(145deg, #1c1c1c, #2a2a2a);
       border: 2px solid var(--primary-green);
       border-radius: 10px;
-      padding: 20px;
+      padding: clamp(15px, 3vw, 20px);
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--primary-green);
-      opacity: 0.5;
-    }
+
     .stat-title {
-      font-size: 1.1em;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
       color: var(--light-green);
       margin-bottom: 15px;
     }
+
     .stat-value {
-      font-size: 2em;
+      font-size: clamp(1.5rem, 3vw, 2rem);
       font-weight: bold;
       margin-bottom: 10px;
     }
+
     .stat-trend {
-      font-size: 0.9em;
+      font-size: clamp(0.8rem, 1.5vw, 0.9rem);
       color: var(--warning-yellow);
     }
-    /* Increase/Decrease Buttons */
+
     .change-btn {
-      padding: 5px 10px;
+      padding: clamp(4px, 1vw, 5px) clamp(8px, 2vw, 10px);
       margin: 5px;
       background-color: var(--primary-green);
       color: #0a0a0a;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
     }
-    .change-btn:hover {
-      background-color: var(--light-green);
-    }
-    /* Risk Meter */
-    .risk-meter {
-      height: 20px;
-      background: #333;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .risk-level {
-      height: 100%;
-      transition: width 0.5s ease, background-color 0.5s ease;
-    }
+
     .charts-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+      gap: clamp(15px, 3vw, 20px);
+      margin-top: clamp(20px, 4vw, 30px);
     }
+
     .chart-card {
       background: #1c1c1c;
       border-radius: 10px;
-      padding: 20px;
+      padding: clamp(15px, 3vw, 20px);
       border: 1px solid var(--dark-green);
+      min-height: 300px;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    .warning-indicator {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      background-color: var(--danger-red);
-      border-radius: 50%;
-      margin-left: 10px;
-      animation: pulse 2s infinite;
-    }
-    /* Cash Pile Flash Animation */
-    .cash-animation {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 2em;
-      opacity: 1;
-      animation: cashAnim 1s forwards;
-      pointer-events: none;
-    }
-    @keyframes cashAnim {
-      0% { transform: translate(-50%, 0); opacity: 1; }
-      100% { transform: translate(-50%, -50px); opacity: 0; }
-    }
-    /* Falling Cash Animation */
-    .falling-cash {
-      position: absolute;
-      top: -50px;
-      font-size: 1.8em;
-      opacity: 1;
-      animation: fallCash 1s forwards;
-      pointer-events: none;
-    }
-    @keyframes fallCash {
-      0% { top: -50px; opacity: 1; }
-      100% { top: 80px; opacity: 0.5; }
-    }
-    /* Cash Pile Container - layered rows for a pile that narrows at the top */
+
     #cashPile {
       position: relative;
-      width: 400px;
-      height: 150px;
-      margin: 30px auto 0 auto;
+      width: min(400px, 90vw);
+      height: clamp(100px, 20vw, 150px);
+      margin: clamp(20px, 4vw, 30px) auto 0;
     }
+
     .cash-row {
       position: absolute;
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 0;
     }
+
     .cash-icon {
-      font-size: 1.4em;
-      margin: 0; /* No spacing between icons */
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      margin: 0;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+      .dashboard-container {
+        margin-top: 40px;
+        padding: 10px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      }
+
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-card {
+        min-height: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 5px;
+      }
+
+      .stat-card {
+        padding: 12px;
+      }
+
+      .change-btn {
+        padding: 3px 6px;
+        margin: 3px;
+      }
+
+      #cashPile {
+        height: 80px;
+      }
+    }
+
+    /* Preserve existing animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes cashAnim {
+      0% { transform: translate(-50%, 0); opacity: 1; }
+      100% { transform: translate(-50%, -50px); opacity: 0; }
+    }
+
+    @keyframes fallCash {
+      0% { top: -50px; opacity: 1; }
+      100% { top: 80px; opacity: 0.5; }
+    }
+
+    .warning-indicator,
+    .cash-animation,
+    .falling-cash {
+      /* Preserve existing properties but make sizes responsive */
+      width: clamp(8px, 1.5vw, 10px);
+      height: clamp(8px, 1.5vw, 10px);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+
+    .dashboard-container {
+      margin-top: 40px; /* Reduced for mobile */
+      padding: 10px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    }
+
+    .charts-container {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+    }
+
+    #cashPile {
+      width: min(90%, 400px);
+      height: clamp(80px, 25vw, 150px);
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 5px;
+      }
+
+      .dashboard-container {
+        margin-top: 30px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .chemical-formula {
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+      }
+
+      .stat-value {
+        font-size: clamp(1.3rem, 5vw, 1.8rem);
+      }
+
+      .change-btn {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+      }
+
+      #cashPile {
+        height: 70px;
+      }
+
+      .chart-card {
+        min-height: 220px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .stat-title {
+        font-size: 0.85rem;
+      }
+
+      .stat-trend {
+        font-size: 0.75rem;
+      }
+
+      .change-btn {
+        padding: 4px 8px;
+      }
+    }
+
+    /* Touch target optimization */
+    .change-btn {
+      min-width: 36px;
+      min-height: 36px;
+    }
+
+    /* Prevent text overflow */
+    .stat-title, .stat-trend {
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
   </style>
 </head>
