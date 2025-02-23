@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +33,7 @@
       margin-top: 150px;
     }
 
-    #navbar-container{
+    #navbar-container {
       margin-top: 50px;
     }
 
@@ -121,9 +122,17 @@
     }
 
     @keyframes alert-pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
 
     .process-flow {
@@ -160,7 +169,7 @@
 
     /* Remove fixed height for dashboard panels for better mobile scaling */
     .dashboard-panel {
-      height: 730px; 
+      height: 730px;
     }
 
     .dashboard-panel::-webkit-scrollbar {
@@ -192,6 +201,61 @@
       left: 0;
     }
 
+    .map-legend {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      background: rgba(0, 20, 0, 0.9);
+      border: 1px solid #00ff00;
+      padding: 10px;
+      color: #00ff00;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 10px;
+      border: 1px solid #00ff00;
+    }
+
+    .map-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 20, 0, 0.9);
+      border: 1px solid #00ff00;
+      padding: 8px 12px;
+      font-size: 12px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .blink {
+      animation: blink-animation 1s steps(2, start) infinite;
+      color: #ff0000;
+    }
+
+    @keyframes blink-animation {
+      to {
+        visibility: hidden;
+      }
+    }
+
     /* Media Queries */
     @media (max-width: 1024px) {
       #operations-map {
@@ -203,9 +267,11 @@
       #operations-map {
         grid-template-columns: repeat(2, 1fr);
       }
+
       .process-flow {
         flex-direction: column;
       }
+
       .process-step {
         width: 100%;
         margin-bottom: 10px;
@@ -216,15 +282,18 @@
       body {
         padding: 10px;
       }
+
       .dashboard-container {
         padding: 0 10px;
       }
+
       .live-feed {
         height: 150px;
       }
     }
   </style>
 </head>
+
 <body>
   <div id="navbar-container"></div>
   <div class="dashboard-container">
@@ -238,13 +307,6 @@
       <div class="dashboard-panel">
         <h2>⚗️ Production Analytics</h2>
         <canvas id="purityChart"></canvas>
-        <div class="process-flow">
-          <div class="process-step">P2P<br>Acquisition</div>
-          <div class="process-step">Chemical<br>Synthesis</div>
-          <div class="process-step">Crystal<br>Growth</div>
-          <div class="process-step">Quality<br>Control</div>
-          <div class="process-step">National<br>Distribution</div>
-        </div>
       </div>
       <div class="dashboard-panel">
         <h2>⚠️ Threat Dashboard</h2>
@@ -261,6 +323,31 @@
   <div id="mapContainer">
     <img src="../assets/map.png" alt="Map" />
     <div id="heatmapOverlay"></div>
+    <div class="map-legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background: green"></div>
+        <span>Low Activity</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: yellow"></div>
+        <span>Moderate</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: red"></div>
+        <span>High Risk</span>
+      </div>
+      <div class="legend-item">
+        <span>🚨 Real-time DEA Heatmap</span>
+      </div>
+    </div>
+    <div class="map-status">
+      <div class="status-item">
+        <span class="blink">●</span> LIVE SURVEILLANCE FEED
+      </div>
+      <div class="status-item">
+        LAST UPDATE: <span id="lastUpdate">00:00:00</span>
+      </div>
+    </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <script src="https://unpkg.com/heatmap.js@2.0.5/build/heatmap.min.js"></script>
@@ -435,10 +522,19 @@
       .then(response => response.text())
       .then(html => {
         document.getElementById('navbar-container').innerHTML = html;
-        
+
         // Reinitialize Flowbite JS after injecting navbar
-        initFlowbite(); 
+        initFlowbite();
       });
+
+    function updateTimestamp() {
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent =
+        now.toLocaleTimeString('en-US', { hour12: false });
+    }
+    setInterval(updateTimestamp, 1000);
+    updateTimestamp();
   </script>
 </body>
+
 </html>
