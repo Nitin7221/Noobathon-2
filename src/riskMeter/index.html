@@ -436,7 +436,7 @@
 
       document.getElementById('productionSpeed').addEventListener('input', function(e) {
         productionSpeed = e.target.value;
-        document.getElementById('productionSpeedValue').textContent = `${productionSpeed}%`;
+        document.getElementById('productionSpeedValue').textContent = `${productionSpeed/100}x`;
         updateProductionData();
         updateMetrics();
         refreshThreat();
