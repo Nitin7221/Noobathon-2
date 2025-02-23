@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="../assets/walter.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
   <title>Breaking Bed</title>
   <style>
     :root {
@@ -409,7 +410,7 @@
 </head>
 
 <body>
-
+  <div id="navbar-container"></div>
   <div class="page-container">
     <div class="hero">
       <video class="video-bg" autoplay loop muted playsinline>
@@ -524,6 +525,7 @@
       <p>&copy; 2025 Breaking Bad Inspired. All rights reserved.</p>
     </footer>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
   <script>
     (function () {
       const phrases = [
@@ -570,6 +572,15 @@
       // Start creating phrases with random intervals
       setInterval(createFloatingPhrase, 300);
     })();
+
+    fetch('../../navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+        
+        // Reinitialize Flowbite JS after injecting navbar
+        initFlowbite(); 
+      });
   </script>
 </body>
 

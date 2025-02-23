@@ -5,6 +5,8 @@
   <title>Blue Sky Analytics</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="../assets/walter.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
   <style>
     :root {
       --black-background: #000000;
@@ -174,9 +176,14 @@
       50% { opacity: 1; }
       100% { opacity: 0.8; }
     }
+
+    .dashboard{
+      margin-top: 100px;
+    }
   </style>
 </head>
 <body>
+  <div id="navbar-container"></div>
   <div id="chemicalElements"></div>
 
   <div class="dashboard">
@@ -213,6 +220,7 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
   <script>
     const chemicals = [
       'C<sub>10</sub>H<sub>15</sub>N', 'P<sub>4</sub>', 'I<sub>2</sub>',
@@ -405,6 +413,15 @@
 
       updateThreat(450, 'revenue', 'Jan');
     });
+
+    fetch('../../navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+        
+        // Reinitialize Flowbite JS after injecting navbar
+        initFlowbite(); 
+      });
   </script>
 </body>
 </html>

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Heisenberg National Operations</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.css" />
+  <link rel="icon" href="../assets/walter.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
   <style>
     * {
       margin: 0;
@@ -21,11 +23,17 @@
         linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
       background-size: 20px 20px;
+      overflow-x: hidden;
     }
 
     .dashboard-container {
       max-width: 1200px;
       margin: 0 auto;
+      margin-top: 150px;
+    }
+
+    #navbar-container{
+      margin-top: 50px;
     }
 
     .nation-grid {
@@ -218,6 +226,7 @@
   </style>
 </head>
 <body>
+  <div id="navbar-container"></div>
   <div class="dashboard-container">
     <div class="alert-banner" id="globalAlert">ALERT: DEA SURVEILLANCE DETECTED</div>
     <div class="dashboard-panel">
@@ -421,6 +430,15 @@
 
     generateRandomData();
     setInterval(generateRandomData, 10000);
+
+    fetch('../../navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+        
+        // Reinitialize Flowbite JS after injecting navbar
+        initFlowbite(); 
+      });
   </script>
 </body>
 </html>

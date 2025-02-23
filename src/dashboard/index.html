@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Empire Dashboard</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  <link rel="icon" href="../assets/walter.png">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+
   <style>
     :root {
       --primary-green: #369457;
@@ -19,11 +21,13 @@
       font-family: 'Courier New', monospace;
       background-color: #0a0a0a;
       color: var(--light-green);
+      overflow-x: hidden;
     }
     .dashboard-container {
       max-width: 1200px;
       margin: 0 auto;
       position: relative;
+      margin-top: 100px;
     }
     .header {
       text-align: center;
@@ -183,6 +187,7 @@
   </style>
 </head>
 <body>
+  <div id="navbar-container"></div>
   <div class="dashboard-container">
     <!-- Header Area -->
     <div class="header">
@@ -242,6 +247,7 @@
     <!-- Cash Pile Container -->
     <div id="cashPile"></div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
   <script>
     // Global interactive values
     let currentRevenue = 7.2; // in millions
@@ -459,6 +465,15 @@
     });
 
     updateDisplays();
+
+    fetch('../../navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+        
+        // Reinitialize Flowbite JS after injecting navbar
+        initFlowbite(); 
+      });
   </script>
 </body>
 </html>
