@@ -243,8 +243,106 @@
       50% { opacity: 1; }
       100% { opacity: 0.8; }
     }
-    .dashboard{
+
+    .dashboard {
       margin-top: 100px;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1200px) {
+      .dashboard {
+        margin-top: 80px;
+        padding: 15px;
+      }
+      .header h1 {
+        font-size: 2.4em;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      .chart-container {
+        height: 350px;
+      }
+      .header h1 {
+        font-size: 2em;
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dashboard {
+        margin-top: 70px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .dashboard {
+        margin-top: 60px;
+      }
+      .header {
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      .header h1 {
+        font-size: 1.6em;
+      }
+      .chart-container {
+        height: 300px;
+        padding: 15px;
+      }
+      .chart-container h2 {
+        font-size: 1.2em;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .metric-box {
+        padding: 10px;
+      }
+      .metric-value {
+        font-size: 1.5em;
+      }
+      .risk-details,
+      .detailed-info {
+        font-size: 0.9em;
+        padding: 10px;
+      }
+      .chemical-float {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 1.4em;
+      }
+      .chart-container {
+        height: 250px;
+      }
+      .controls-container {
+        padding: 15px;
+      }
+      .slider-label {
+        font-size: 0.9em;
+      }
+      .control-value {
+        font-size: 0.9em;
+      }
+      .risk-bar {
+        height: 30px;
+      }
+      .chemical-float {
+        font-size: 24px;
+      }
+      .dashboard {
+        margin-top: 50px;
+      }
     }
   </style>
 </head>
@@ -320,7 +418,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     const chemicals = [
       'C<sub>10</sub>H<sub>15</sub>N', 'P<sub>4</sub>', 'I<sub>2</sub>',
       'NH<sub>3</sub>', 'HCl', 'NaOH', 'C<sub>7</sub>H<sub>7</sub>NO<sub>2</sub>',
@@ -364,6 +462,35 @@
           high: ["Mass production indicators", "Satellite surveillance"]
         }
       };
+
+      fetch('../../navbar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('navbar-container').innerHTML = html;
+        
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if(hamburger && mobileMenu) {
+          hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            hamburger.classList.toggle('active');
+          });
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if(!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add('hidden');
+            hamburger.classList.remove('active');
+          }
+        });
+
+        initFlowbite();
+      }).catch(error => {
+        console.error('Error loading navbar:', error);
+      });
 
       const monthDetails = {
         Jan: { 
