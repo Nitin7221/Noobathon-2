@@ -4,9 +4,9 @@
             <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="/src/assets/walter.png" class="h-12" alt="BB Logo" />
             </a>
-            <button data-collapse-toggle="navbar-solid-bg" type="button"
+            <button data-collapse-toggle="mobile-menu" type="button"
                 class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-400 rounded-lg md:hidden hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                aria-controls="navbar-solid-bg" aria-expanded="false">
+                aria-controls="mobile-menu" aria-expanded="false">
                 <span class="sr-only">Open main menu</span>
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 17 14">
@@ -14,7 +14,8 @@
                         d="M1 1h15M1 7h15M1 13h15" />
                 </svg>
             </button>
-            <div class="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
+            <!-- Added bg-black and md:bg-transparent to the mobile menu div -->
+            <div class="hidden w-full md:block md:w-auto bg-black md:bg-transparent" id="mobile-menu">
                 <ul
                     class="flex flex-col font-medium mt-4 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
                     <li>
@@ -44,3 +45,5 @@
         </div>
     </nav>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
